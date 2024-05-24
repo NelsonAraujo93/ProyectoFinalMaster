@@ -1,4 +1,4 @@
-package com.example.ayuntamientoapi.configuracion;
+package com.example.ayuntamientoapi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

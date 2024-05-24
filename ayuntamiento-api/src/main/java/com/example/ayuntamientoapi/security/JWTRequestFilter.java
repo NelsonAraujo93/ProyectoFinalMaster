@@ -1,4 +1,4 @@
-package com.example.ayuntamientoapi.seguridad;
+package com.example.ayuntamientoapi.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class JWTRequestFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UtilidadJWT utilidadJWT;
+    private JWTUtils utilidadJWT;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest solicitud, @NonNull HttpServletResponse respuesta, @NonNull FilterChain cadena)

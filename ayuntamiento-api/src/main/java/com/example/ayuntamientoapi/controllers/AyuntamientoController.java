@@ -1,11 +1,11 @@
-package com.example.ayuntamientoapi.controlador;
+package com.example.ayuntamientoapi.controllers;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
@@ -23,21 +23,23 @@ public class AyuntamientoController {
 
     private final RestTemplate restTemplate;
 
-    public ControladorAyuntamiento(RestTemplate restTemplate) {
+    public AyuntamientoController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @GetMapping("/bicis")
-    public ResponseEntity<String> obtenerBicis() {
+    public ResponseEntity<String> obtenerBicis(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, token);
         headers.set("Api-Key", apiKey);
-        return restTemplate.getForEntity(bicisApiUrl + "/api/aparcamientos", String.class, headers);
+        return restTemplate.exchange(bicisApiUrl + "/api/aparcamientos", HttpMethod.GET, new HttpEntity<>(headers), String.class);
     }
 
     @GetMapping("/estaciones")
-    public ResponseEntity<String> obtenerEstaciones() {
+    public ResponseEntity<String> obtenerEstaciones(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, token);
         headers.set("Api-Key", apiKey);
-        return restTemplate.getForEntity(estacionesApiUrl + "/api/estaciones", String.class, headers);
+        return restTemplate.exchange(estacionesApiUrl + "/api/estaciones", HttpMethod.GET, new HttpEntity<>(headers), String.class);
     }
 }

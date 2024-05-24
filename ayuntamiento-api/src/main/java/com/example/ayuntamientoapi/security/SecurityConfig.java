@@ -1,8 +1,7 @@
-package com.example.ayuntamientoapi.seguridad;
+package com.example.ayuntamientoapi.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -28,17 +27,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-            .authorizeHttpRequests((requests) -> requests
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests((requests) -> requests
+                                .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(filtroSolicitudJWT(), UsernamePasswordAuthenticationFilter.class);
 
@@ -46,7 +45,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public FiltroSolicitudJWT filtroSolicitudJWT() {
-        return new FiltroSolicitudJWT();
+    JWTRequestFilter filtroSolicitudJWT() {
+        return new JWTRequestFilter();
     }
 }

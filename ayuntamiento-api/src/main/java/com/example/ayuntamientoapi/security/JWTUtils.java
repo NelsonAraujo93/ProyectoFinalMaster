@@ -1,4 +1,4 @@
-package com.example.ayuntamientoapi.seguridad;
+package com.example.ayuntamientoapi.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
