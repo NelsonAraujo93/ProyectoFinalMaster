@@ -1,4 +1,4 @@
-package com.example.bicisapi.security;
+package com.example.ayuntamientoapi.seguridad;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -11,18 +11,18 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
 @Component
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class JWTRequestFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtJava utilidadJWT;
+    private UtilidadJWT utilidadJWT;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest solicitud, @NonNull HttpServletResponse respuesta,
-            @NonNull FilterChain cadena)
+    protected void doFilterInternal(@NonNull HttpServletRequest solicitud, @NonNull HttpServletResponse respuesta, @NonNull FilterChain cadena)
             throws ServletException, IOException {
 
         final String encabezadoAutorizacion = solicitud.getHeader("Authorization");
@@ -36,8 +36,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         if (nombreUsuario != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                    nombreUsuario, null, new ArrayList<>());
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                    new UsernamePasswordAuthenticationToken(nombreUsuario, null, new ArrayList<>());
             usernamePasswordAuthenticationToken
                     .setDetails(new WebAuthenticationDetailsSource().buildDetails(solicitud));
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

@@ -7,7 +7,7 @@
         <artifactId>springboot-multi-module</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>bicis-api</artifactId>
+    <artifactId>estaciones-api</artifactId>
 
     <dependencies>
         <dependency>

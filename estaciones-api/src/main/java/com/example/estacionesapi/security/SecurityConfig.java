@@ -1,4 +1,4 @@
-package com.example.bicisapi.security;
+package com.example.estacionesapi.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

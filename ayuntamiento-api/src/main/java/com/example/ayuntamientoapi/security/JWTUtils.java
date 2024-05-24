@@ -1,4 +1,4 @@
-package com.example.bicisapi.security;
+package com.example.ayuntamientoapi.seguridad;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class JwtJava {
+public class JWTUtils {
 
     private String CLAVE_SECRETA = "secreto";
 
@@ -42,8 +42,7 @@ public class JwtJava {
     }
 
     private String crearToken(Map<String, Object> reclamaciones, String sujeto) {
-        return Jwts.builder().setClaims(reclamaciones).setSubject(sujeto)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts.builder().setClaims(reclamaciones).setSubject(sujeto).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS256, CLAVE_SECRETA).compact();
     }

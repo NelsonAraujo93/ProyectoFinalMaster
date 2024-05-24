@@ -9,6 +9,8 @@
 
     <modules>
         <module>bicis-api</module>
+        <module>estaciones-api</module>
+        <module>ayuntamiento-api</module>
     </modules>
 
     <properties>
