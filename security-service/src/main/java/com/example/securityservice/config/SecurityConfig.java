@@ -13,22 +13,25 @@ import org.springframework.http.HttpStatus;
 public class SecurityConfig {
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http.csrf().disable()
-            .formLogin().disable()
-            .logout().disable()
-            .authorizeExchange(exchanges -> exchanges
-                .pathMatchers("/auth/**").permitAll()
-                .anyExchange().authenticated()
+    SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        return http.csrf(csrf -> csrf.disable()
+            .formLogin(login -> login.disable()
+                    .logout(logout -> logout.disable()
+                    .authorizeExchange(exchanges -> exchanges
+                                    .pathMatchers("/auth/**").permitAll()
+                                    .anyExchange().authenticated()
+                    )
+                    .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> {
+                            swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                        }))
+                        .accessDeniedHandler((swe, e) -> Mono.fromRunnable(() -> {
+                            swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                        }))
+                    )
+                )
             )
-            .exceptionHandling()
-            .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> {
-                swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            }))
-            .accessDeniedHandler((swe, e) -> Mono.fromRunnable(() -> {
-                swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-            }))
-            .and()
-            .build();
+        )
+        .build();
     }
 }

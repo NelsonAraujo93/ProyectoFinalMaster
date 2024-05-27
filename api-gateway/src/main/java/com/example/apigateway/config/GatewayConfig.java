@@ -24,7 +24,7 @@ public class GatewayConfig {
                 .route("auth_route", r -> r.path("/auth/**")
                         .filters(f -> f.filter(loggingFilter.apply(new LoggingFilter.Config())))
                         .uri("http://localhost:8083"))
-                .route("bicis_route", r -> r.path("/bicisapi/**")
+                .route("bicis_route", r -> r.path("/api/v1/aparcamientos/**")
                         .filters(f -> f.filter(loggingFilter.apply(new LoggingFilter.Config()))
                                 .filter(authFilter.apply(new AuthFilter.Config())))
                         .uri("http://localhost:8081"))

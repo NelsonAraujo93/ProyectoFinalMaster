@@ -4,54 +4,60 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "Parking")
 public class Aparcamiento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String direccion;
-    private int maxBicis;
-    private double latitud;
-    private double longitud;
+
+    private String direction;
+
+    private int bikes_capacity;
+
+    private double latitude;
+
+    private double longitude;
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getDireccion() {
-        return direccion;
+    public String getDirection() {
+        return this.direction;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
-    public int getMaxBicis() {
-        return maxBicis;
+    public int getBikesCapacity() {
+        return this.bikes_capacity;
     }
 
-    public void setMaxBicis(int maxBicis) {
-        this.maxBicis = maxBicis;
+    public void setBikesCapacity(int bikesCapacity) {
+        this.bikes_capacity = bikesCapacity;
     }
 
     public double getLatitud() {
-        return latitud;
+        return this.latitude;
     }
 
-    public void setLatitud(double latitud) {
-        this.latitud = latitud;
+    public void setLatitud(double latitude) {
+        this.latitude = latitude;
     }
 
     public double getLongitud() {
-        return longitud;
+        return this.longitude;
     }
 
-    public void setLongitud(double longitud) {
-        this.longitud = longitud;
+    public void setLongitud(double longitude) {
+        this.longitude = longitude;
     }
 }
