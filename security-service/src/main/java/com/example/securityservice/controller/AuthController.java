@@ -40,6 +40,7 @@ public class AuthController {
         if (isValid) {
             String username = jwtService.getUsernameFromToken(token);
             return ResponseEntity.ok(username);
+            // agregar validacion de token corrupto
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
         }

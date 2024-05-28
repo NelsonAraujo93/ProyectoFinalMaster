@@ -18,7 +18,7 @@ public class AparcamientoService {
         return aparcamientoRepository.findAll();
     }
 
-    public Optional<Aparcamiento> findById(Long id) {
+    public Optional<Aparcamiento> findById(String id) {
         return aparcamientoRepository.findById(id);
     }
 

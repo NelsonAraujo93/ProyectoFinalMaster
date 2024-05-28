@@ -14,6 +14,7 @@ public class AparcamientoState {
     private int bikesAvailable;
     private int freeParkingSpots;
     private Instant timestamp;
+    private int amountOfBikes;
 
     // Getters y Setters
     public String getId() {
@@ -25,7 +26,7 @@ public class AparcamientoState {
     }
 
     public String getAparcamientoId() {
-        return aparcamientoId;
+        return this.aparcamientoId;
     }
 
     public void setAparcamientoId(String aparcamientoId) {
@@ -41,7 +42,7 @@ public class AparcamientoState {
     }
 
     public int getBikesAvailable() {
-        return bikesAvailable;
+        return this.bikesAvailable;
     }
 
     public void setBikesAvailable(int bikesAvailable) {
@@ -49,7 +50,7 @@ public class AparcamientoState {
     }
 
     public int getFreeParkingSpots() {
-        return freeParkingSpots;
+        return this.freeParkingSpots;
     }
 
     public void setFreeParkingSpots(int freeParkingSpots) {
@@ -57,10 +58,18 @@ public class AparcamientoState {
     }
 
     public Instant getTimestamp() {
-        return timestamp;
+        return this.timestamp;
     }
 
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getAmountOfBikes() {
+        return this.amountOfBikes;
+    }
+
+    public void setAmountOfBikes(int amountOfBikes) {
+        this.amountOfBikes = amountOfBikes;
     }
 }
