@@ -12,13 +12,13 @@ import java.util.Optional;
 
 @Repository
 public interface AparcamientoStateRepository extends MongoRepository<AparcamientoState, String> {
-  Optional<AparcamientoState> findByAparcamientoIdAndTimestampBetween(String aparcamientoId, Instant start, Instant end);
+  List<AparcamientoState> findByAparcamientoIdAndTimestampBetween(String aparcamientoId, Instant start, Instant end);
 
   List<AparcamientoState> findByAparcamientoId(String aparcamientoId);
 
   List<AparcamientoState> findTop10ByTimestamp();
 
-  Optional<AparcamientoState> findTopByAparcamientoIdOrderByTimestampDesc(String aparcamientoId);
+  List<AparcamientoState> findTopByAparcamientoIdOrderByTimestampDesc(String aparcamientoId);
 
    @Aggregation(pipeline = {
           "{ $sort: { timestamp: -1 } }",

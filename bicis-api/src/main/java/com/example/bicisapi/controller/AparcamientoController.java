@@ -15,9 +15,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/api/v1/aparcamientos")
+@RequestMapping("/api/v1/aparcamiento")
 public class AparcamientoController {
 
     @Autowired
@@ -29,87 +30,71 @@ public class AparcamientoController {
     // Add a new parking spot (admin role)
     @PostMapping("")
     public Aparcamiento createAparcamiento(@RequestBody Aparcamiento aparcamiento) {
-        try {
-            Aparcamiento savedAparcamiento = aparcamientoService.save(aparcamiento);
-            AparcamientoState aparcamientoState = new AparcamientoState();
-            aparcamientoState.setAparcamientoId(savedAparcamiento.getId().toString());
-            aparcamientoState.setOperation("open");
-            aparcamientoState.setBikesAvailable(savedAparcamiento.getBikesCapacity());
-            aparcamientoState.setFreeParkingSpots(0);
-            aparcamientoStateService.createEvent(savedAparcamiento.getId().toString(), aparcamientoState);
-            return savedAparcamiento;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create aparcamiento", e);
-        }
+        Aparcamiento savedAparcamiento = aparcamientoService.save(aparcamiento);
+        AparcamientoState aparcamientoState = new AparcamientoState();
+        aparcamientoState.setAparcamientoId(savedAparcamiento.getId().toString());
+        aparcamientoState.setOperation("open");
+        aparcamientoState.setBikesAvailable(savedAparcamiento.getBikesCapacity());
+        aparcamientoState.setFreeParkingSpots(0);
+        aparcamientoStateService.createEvent(savedAparcamiento.getId().toString(), aparcamientoState);
+        return savedAparcamiento;
     }
 
     // Delete a parking spot by id (admin role)
     @DeleteMapping("/{id}")
     public void deleteAparcamiento(@PathVariable Long id) {
-        //verificar que exista antes de borrar
-        try {
-            aparcamientoService.deleteById(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete aparcamiento", e);
-        }
+        aparcamientoService.deleteById(id);
     }
 
     // Edit a parking spot (admin role)
     @PutMapping("/{id}")
     public Aparcamiento updateAparcamiento(@PathVariable Long id, @RequestBody Aparcamiento aparcamiento) {
-        try {
-            aparcamiento.setId(id);
-            return aparcamientoService.save(aparcamiento);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update aparcamiento", e);
-        }
+        aparcamiento.setId(id);
+        return aparcamientoService.save(aparcamiento);
     }
 
     // Get all parking spots (public endpoint)
     @GetMapping("")
     public List<Aparcamiento> getAllAparcamientos() {
-        try {
-            return aparcamientoService.findAll();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve aparcamientos", e);
-        }
+        return aparcamientoService.findAll();
     }
 
     // Notify about a bike operation (parking role)
     @PostMapping("/evento/{id}")
     public AparcamientoState addAparcamientoState(@PathVariable String id, @RequestBody AparcamientoState aparcamientoState) {
-        try {
-            Optional<Aparcamiento> aparcamientoOptional = aparcamientoService.findById(id);
-            if (aparcamientoOptional.isPresent()) {
-                aparcamientoState.setAparcamientoId(id);
-                try {
-                    return aparcamientoStateService.createEvent(id, aparcamientoState);
-                } catch (CustomException e) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-                }
-            } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aparcamiento not found");
+        Optional<Aparcamiento> aparcamientoOptional = aparcamientoService.findById(id);
+        if (aparcamientoOptional.isPresent()) {
+            aparcamientoState.setAparcamientoId(id);
+            try {
+                return aparcamientoStateService.createEvent(id, aparcamientoState);
+            } catch (CustomException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
             }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to add aparcamiento state", e);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aparcamiento not found");
         }
     }
 
     // Get the current state of a parking spot or all state changes within a time range (public endpoint)
     @GetMapping("/{id}/status")
-    public Optional<AparcamientoState> getAparcamientoStatus(@PathVariable String id,
+    public List<AparcamientoState> getAparcamientoStatus(@PathVariable String id,
                                                         @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
                                                         @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to) {
         try {
+            Optional<Aparcamiento> aparcamientoOptional = aparcamientoService.findById(id);
+            if (!aparcamientoOptional.isPresent()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aparcamiento not found");
+            }
+
             if (from != null && to != null) {
+                Logger logger = Logger.getLogger(AparcamientoController.class.getName());
+                logger.info("from: " + from + " to: " + to);
+                if (!from.isBefore(to)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The 'from' timestamp must be before the 'to' timestamp");
+                }
                 return aparcamientoStateService.findByAparcamientoIdAndTimestampBetween(id, from, to);
             } else {
-                Optional<Aparcamiento> aparcamientoOptional = aparcamientoService.findById(id);
-                if (aparcamientoOptional.isPresent()) {
-                    return aparcamientoStateService.findTopByAparcamientoIdOrderByTimestampDesc(id);
-                } else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aparcamiento not found");
-                }
+                return aparcamientoStateService.findTopByAparcamientoIdOrderByTimestampDesc(id);
             }
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve aparcamiento status", e);
@@ -119,10 +104,6 @@ public class AparcamientoController {
     // Get the top 10 parking spots with the most available bikes at a given time (public endpoint)
     @GetMapping("/top10")
     public List<AparcamientoState> getTop10AparcamientosByBikesAvailable() {
-        try {
-            return aparcamientoStateService.findTop10ByBikesAvailable();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve top 10 aparcamientos", e);
-        }
+        return aparcamientoStateService.findTop10ByBikesAvailable();
     }
 }
