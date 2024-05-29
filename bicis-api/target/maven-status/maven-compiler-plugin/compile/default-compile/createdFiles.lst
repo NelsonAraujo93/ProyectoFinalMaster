@@ -1,8 +1,8 @@
-com/example/bicisapi/repository/AparcamientoStateRepository.class
 com/example/bicisapi/service/AparcamientoService.class
 com/example/bicisapi/BicisApiApplication.class
+com/example/bicisapi/repository/AparcamientoStateRepository.class
 com/example/bicisapi/service/AparcamientoStateService.class
 com/example/bicisapi/domain/AparcamientoState.class
-com/example/bicisapi/controller/AparcamientoController.class
 com/example/bicisapi/domain/Aparcamiento.class
 com/example/bicisapi/repository/AparcamientoRepository.class
+com/example/bicisapi/exception/CustomException.class

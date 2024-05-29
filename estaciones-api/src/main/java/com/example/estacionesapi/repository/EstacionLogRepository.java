@@ -11,4 +11,5 @@ import java.util.List;
 public interface EstacionLogRepository extends MongoRepository<EstacionLog, String> {
     List<EstacionLog> findByEstacionIdAndTimestampBetween(String estacionId, Instant start, Instant end);
     List<EstacionLog> findTopByEstacionIdOrderByTimestampDesc(String estacionId);
+    List<EstacionLog> findByEstacionId(String estacionId);
 }

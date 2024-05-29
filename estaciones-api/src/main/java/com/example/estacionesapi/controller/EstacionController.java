@@ -1,5 +1,6 @@
 package com.example.estacionesapi.controller;
 
+import com.example.estacionesapi.dao.AirQualityDTO;
 import com.example.estacionesapi.domain.Estacion;
 import com.example.estacionesapi.domain.EstacionLog;
 import com.example.estacionesapi.exception.CustomException;
@@ -18,7 +19,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/api/v1/estaciones")
+@RequestMapping("/api/v1")
 public class EstacionController {
 
     @Autowired
@@ -27,7 +28,7 @@ public class EstacionController {
     @Autowired
     private EstacionLogService els;
 
-    @PostMapping("")
+    @PostMapping("/estacion")
     public Estacion createEstacion(@RequestBody Estacion estacion) {
         Estacion savedEstacion = es.save(estacion);
         EstacionLog estacionLog = new EstacionLog();
@@ -40,23 +41,31 @@ public class EstacionController {
         return savedEstacion;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/estacion/{id}")
     public void deleteEstacion(@PathVariable Long id) {
+        Optional<Estacion> esOptional = es.findById(id.toString());
+        if (!esOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Estacion not found");
+        }
         es.deleteById(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/estacion/{id}")
     public Estacion updateEstacion(@PathVariable Long id, @RequestBody Estacion estacion) {
+        Optional<Estacion> esOptional = es.findById(id.toString());
+        if (!esOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Estacion not found");
+        }
         estacion.setId(id);
         return es.save(estacion);
     }
 
-    @GetMapping("")
+    @GetMapping("/estaciones")
     public List<Estacion> getAllEstaciones() {
         return es.findAll();
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/log/{id}")
     public EstacionLog addEstacionLog(@PathVariable String id, @RequestBody EstacionLog estacionLog) {
         Optional<Estacion> estacionOptional = es.findById(id);
         if (estacionOptional.isPresent()) {
@@ -71,7 +80,7 @@ public class EstacionController {
         }
     }
 
-    @GetMapping("/{id}/status")
+    @GetMapping("/estacion/{id}/status")
     public List<EstacionLog> getEstacionesStatus(@PathVariable String id,
                                                         @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
                                                         @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to) {
@@ -94,5 +103,10 @@ public class EstacionController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve aparcamiento status", e);
         }
+    }
+
+    @GetMapping("/average")
+    public AirQualityDTO getAverageContaminants(@RequestParam double lat, @RequestParam double lon) {
+        return es.getAverageContaminants(lat, lon);
     }
 }

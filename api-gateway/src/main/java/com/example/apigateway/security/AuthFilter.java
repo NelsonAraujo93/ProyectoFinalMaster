@@ -12,6 +12,8 @@ import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 @Component
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
 
@@ -23,64 +25,113 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
     public AuthFilter(WebClient.Builder webClientBuilder) {
         super(Config.class);
         this.webClientBuilder = webClientBuilder;
-        System.out.println("AuthFilter constructor called");
     }
 
     @Override
     public GatewayFilter apply(Config config) {
-        System.out.println("AuthFilter apply method called");
-        logger.info("AuthFilter applied");
         return (exchange, chain) -> {
 
             ServerHttpResponse response = exchange.getResponse();
             String path = exchange.getRequest().getURI().getPath();
+            logger.info("Processing request for path: {}", path);
 
-            // Skip authentication for /auth/** paths
             if (path.startsWith("/auth")) {
-                logger.info("Skipping authentication for path: " + path);
                 return chain.filter(exchange);
             }
 
             if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                logger.warn("Bearer token is missing in header");
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                return response.setComplete();
+                return response.writeWith(Mono.just(response.bufferFactory().wrap("Bearer token is missing in header".getBytes())));
             }
 
             String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             if (!authHeader.startsWith("Bearer ")) {
+                logger.warn("Bearer token is not present");
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                return response.setComplete();
+                return response.writeWith(Mono.just(response.bufferFactory().wrap("Bearer token is not present".getBytes())));
             }
 
-            try {
-                logger.info("Performing authentication...");
-                return webClientBuilder.build()
-                        .get()
-                        .uri("http://localhost:8083/auth/validateToken")  // URL to validate token in security-service
-                        .header(HttpHeaders.AUTHORIZATION, authHeader)
-                        .retrieve()
-                        .onStatus(httpStatus -> httpStatus.value() != HttpStatus.OK.value(),
-                                error -> Mono.error(new Throwable("UNAUTHORIZED")))
-                        .toEntity(String.class)
-                        .flatMap(entity -> {
-                            if (entity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-                                response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                                return response.setComplete();
-                            }
-                            exchange.getRequest()
-                                    .mutate()
-                                    .header("x-auth-user-id", entity.getBody());
-                            return chain.filter(exchange);
-                        });
-            } catch (Throwable e) {
-                logger.error("Error during authentication", e);
+            String token = authHeader.replace("Bearer ", "");
+            if (token.isEmpty()) {
+                logger.warn("Token is empty");
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                return response.setComplete();
+                return response.writeWith(Mono.just(response.bufferFactory().wrap("Token is empty".getBytes())));
             }
+
+            return webClientBuilder.build()
+                    .get()
+                    .uri("http://localhost:8083/auth/validateToken")
+                    .header(HttpHeaders.AUTHORIZATION, authHeader)
+                    .retrieve()
+                    .onStatus(httpStatus -> httpStatus.value() != HttpStatus.OK.value(),
+                                error -> Mono.error(new Throwable("UNAUTHORIZED")))
+                    .bodyToMono(AuthValidationResponse.class)
+                    .flatMap(authValidationResponse -> {
+                        logger.info("Token validated for user: {}", authValidationResponse.getUsername());
+                        logger.info("User roles: {}", authValidationResponse.getRoles());
+                        logger.info("Required role: {}", config.getRole());
+
+                        if (authValidationResponse.getUsername() == null || authValidationResponse.getUsername().isEmpty()) {
+                            logger.warn("Invalid token: no username found");
+                            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                            return response.writeWith(Mono.just(response.bufferFactory().wrap("Invalid token".getBytes())));
+                        }
+
+                        if (!authValidationResponse.getRoles().contains(config.getRole())) {
+                            logger.warn("Insufficient role for user: {}", authValidationResponse.getUsername());
+                            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                            return response.writeWith(Mono.just(response.bufferFactory().wrap("Insufficient role".getBytes())));
+                        }
+
+                        exchange.getRequest().mutate().header("x-auth-user-id", authValidationResponse.getUsername());
+                        return chain.filter(exchange);
+                    }).onErrorResume(e -> {
+                        logger.error("Token validation error: ", e);
+                        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                        return response.writeWith(Mono.just(response.bufferFactory().wrap("Token is corrupt".getBytes())));
+                    });
         };
     }
 
     public static class Config {
-        // Configuration properties if any
+        private String role;
+
+        public Config() {
+        }
+
+        public Config(String role) {
+            this.role = role;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+    }
+
+    public static class AuthValidationResponse {
+        private String username;
+        private List<String> roles;
+
+        // Getters and Setters
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public List<String> getRoles() {
+            return roles;
+        }
+
+        public void setRoles(List<String> roles) {
+            this.roles = roles;
+        }
     }
 }

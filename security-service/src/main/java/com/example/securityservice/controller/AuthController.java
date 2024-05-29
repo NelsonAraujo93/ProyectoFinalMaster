@@ -1,48 +1,55 @@
 package com.example.securityservice.controller;
 
+import com.example.securityservice.config.UserConfig;
+import com.example.securityservice.model.AuthRequest;
+import com.example.securityservice.model.AuthResponse;
+import com.example.securityservice.model.User;
 import com.example.securityservice.service.JwtService;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.securityservice.model.AuthRequest;
-import org.springframework.http.HttpStatus;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     private final JwtService jwtService;
+    private final UserConfig userConfig;
 
-    @Value("${app.security.username}")
-    private String validUsername;
-
-    @Value("${app.security.password}")
-    private String validPassword;
-
-    public AuthController(JwtService jwtService) {
+    @Autowired
+    public AuthController(JwtService jwtService, UserConfig userConfig) {
         this.jwtService = jwtService;
+        this.userConfig = userConfig;
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<String> authenticate(@RequestBody AuthRequest authRequest) {
-        if (authRequest.getUsername().equals(validUsername) && authRequest.getPassword().equals(validPassword)) {
-            String token = jwtService.generateToken(authRequest.getUsername());
+        Optional<User> userOpt = userConfig.getUsers().stream()
+                .filter(user -> user.getUsername().equals(authRequest.getUsername()) && user.getPassword().equals(authRequest.getPassword()))
+                .findFirst();
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            String token = jwtService.generateToken(user.getUsername(), user.getRoles());
             return ResponseEntity.ok(token);
         } else {
-            return ResponseEntity.status(401).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
     }
 
     @GetMapping("/validateToken")
-    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<AuthResponse> validateToken(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         boolean isValid = jwtService.validateToken(token);
         if (isValid) {
             String username = jwtService.getUsernameFromToken(token);
-            return ResponseEntity.ok(username);
-            // agregar validacion de token corrupto
+            AuthResponse response = new AuthResponse(username, jwtService.getRolesFromToken(token));
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Invalid token"));
         }
     }
 }

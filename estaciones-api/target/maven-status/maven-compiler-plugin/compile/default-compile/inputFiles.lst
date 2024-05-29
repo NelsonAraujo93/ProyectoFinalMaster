@@ -5,5 +5,7 @@
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/estaciones-api/src/main/java/com/example/estacionesapi/repository/EstacionLogRepository.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/estaciones-api/src/main/java/com/example/estacionesapi/domain/EstacionLog.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/estaciones-api/src/main/java/com/example/estacionesapi/EstacionesApiApplication.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/estaciones-api/src/main/java/com/example/estacionesapi/dao/EstacionContaminantesPromedioDTO.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/estaciones-api/src/main/java/com/example/estacionesapi/service/EstacionService.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/estaciones-api/src/main/java/com/example/estacionesapi/exception/CustomException.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/estaciones-api/src/main/java/com/example/estacionesapi/dao/AirQualityDTO.java

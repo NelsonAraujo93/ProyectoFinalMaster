@@ -1,3 +1,4 @@
+com/example/securityservice/model/User.class
 com/example/securityservice/config/SecurityConfig.class
 com/example/securityservice/service/JwtService.class
 com/example/securityservice/model/AuthRequest.class

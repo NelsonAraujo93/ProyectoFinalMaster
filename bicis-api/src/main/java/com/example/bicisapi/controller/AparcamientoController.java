@@ -1,5 +1,7 @@
 package com.example.bicisapi.controller;
 
+import com.example.bicisapi.dao.AparcamientoFreeParkingSpotsDTO;
+import com.example.bicisapi.dao.AparcamientoStateDTO;
 import com.example.bicisapi.domain.Aparcamiento;
 import com.example.bicisapi.domain.AparcamientoState;
 import com.example.bicisapi.exception.CustomException;
@@ -9,6 +11,7 @@ import com.example.bicisapi.service.AparcamientoStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,7 +21,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/api/v1/aparcamiento")
+@RequestMapping("/api/v1")
 public class AparcamientoController {
 
     @Autowired
@@ -27,39 +30,56 @@ public class AparcamientoController {
     @Autowired
     private AparcamientoStateService aparcamientoStateService;
 
+    private final Logger logger = Logger.getLogger(AparcamientoController.class.getName());
+
     // Add a new parking spot (admin role)
-    @PostMapping("")
+    @PostMapping("/aparcamiento")
     public Aparcamiento createAparcamiento(@RequestBody Aparcamiento aparcamiento) {
+        if (aparcamiento == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aparcamiento data is required");
+        }
         Aparcamiento savedAparcamiento = aparcamientoService.save(aparcamiento);
-        AparcamientoState aparcamientoState = new AparcamientoState();
-        aparcamientoState.setAparcamientoId(savedAparcamiento.getId().toString());
-        aparcamientoState.setOperation("open");
-        aparcamientoState.setBikesAvailable(savedAparcamiento.getBikesCapacity());
-        aparcamientoState.setFreeParkingSpots(0);
-        aparcamientoStateService.createEvent(savedAparcamiento.getId().toString(), aparcamientoState);
         return savedAparcamiento;
     }
 
     // Delete a parking spot by id (admin role)
-    @DeleteMapping("/{id}")
-    public void deleteAparcamiento(@PathVariable Long id) {
-        aparcamientoService.deleteById(id);
+    @DeleteMapping("/aparcamiento/{id}")
+    public void deleteAparcamiento(@PathVariable String id) {
+        if (id == null || id.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aparcamiento id is required");
+        }
+        Long longId = Long.parseLong(id);
+        Optional<Aparcamiento> aparcamientoOptional = aparcamientoService.findById(id);
+        if (aparcamientoOptional.isPresent()) {
+            aparcamientoService.deleteById(longId);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aparcamiento not found");
+        }
     }
 
     // Edit a parking spot (admin role)
-    @PutMapping("/{id}")
+    @PutMapping("/aparcamiento/{id}")
     public Aparcamiento updateAparcamiento(@PathVariable Long id, @RequestBody Aparcamiento aparcamiento) {
+        if (id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aparcamiento id is required");
+        }
+        if (aparcamiento == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aparcamiento data is required");
+        }
+        Optional<Aparcamiento> aparcamientoOptional = aparcamientoService.findById(id.toString());
+        if (!aparcamientoOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aparcamiento not found");
+        }
         aparcamiento.setId(id);
         return aparcamientoService.save(aparcamiento);
     }
 
     // Get all parking spots (public endpoint)
-    @GetMapping("")
+    @GetMapping("/aparcamientos")
     public List<Aparcamiento> getAllAparcamientos() {
         return aparcamientoService.findAll();
     }
 
-    // Notify about a bike operation (parking role)
     @PostMapping("/evento/{id}")
     public AparcamientoState addAparcamientoState(@PathVariable String id, @RequestBody AparcamientoState aparcamientoState) {
         Optional<Aparcamiento> aparcamientoOptional = aparcamientoService.findById(id);
@@ -69,6 +89,8 @@ public class AparcamientoController {
                 return aparcamientoStateService.createEvent(id, aparcamientoState);
             } catch (CustomException e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
             }
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aparcamiento not found");
@@ -76,10 +98,13 @@ public class AparcamientoController {
     }
 
     // Get the current state of a parking spot or all state changes within a time range (public endpoint)
-    @GetMapping("/{id}/status")
+    @GetMapping("/aparcamiento/{id}/status")
     public List<AparcamientoState> getAparcamientoStatus(@PathVariable String id,
                                                         @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
                                                         @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to) {
+        if (id == null || id.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Aparcamiento id is required");
+        }
         try {
             Optional<Aparcamiento> aparcamientoOptional = aparcamientoService.findById(id);
             if (!aparcamientoOptional.isPresent()) {
@@ -102,8 +127,27 @@ public class AparcamientoController {
     }
 
     // Get the top 10 parking spots with the most available bikes at a given time (public endpoint)
-    @GetMapping("/top10")
+    @GetMapping("/aparcamientos/top10")
     public List<AparcamientoState> getTop10AparcamientosByBikesAvailable() {
         return aparcamientoStateService.findTop10ByBikesAvailable();
+    }
+
+    @GetMapping("/aparcamientoCercano")
+    public ResponseEntity<AparcamientoStateDTO> findNearestAparcamientoWithBikes(@RequestParam double lat, @RequestParam double lon) {
+        logger.info("Received request to find nearest aparcamiento with bikes for lat: " + lat + ", lon: " + lon);
+        try {
+            AparcamientoStateDTO aparcamiento = aparcamientoService.findNearestAparcamientoWithBikes(lat, lon);
+            logger.info("Nearest aparcamiento found: " + aparcamiento);
+            return ResponseEntity.ok(aparcamiento);
+        } catch (RuntimeException e) {
+            logger.severe("No available bikes found in nearest aparcamientos");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/average")
+    public ResponseEntity<List<AparcamientoFreeParkingSpotsDTO>> getAverageFreeParkingSpots() {
+        List<AparcamientoFreeParkingSpotsDTO> averages = aparcamientoService.calculateAverageFreeParkingSpots();
+        return ResponseEntity.ok(averages);
     }
 }

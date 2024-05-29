@@ -1,0 +1,7 @@
+com/example/ayuntamientoapi/service/AggregatedDataService.class
+com/example/ayuntamientoapi/domain/Aparcamiento.class
+com/example/ayuntamientoapi/domain/AggregatedData.class
+com/example/ayuntamientoapi/AyuntamientoApiApplication.class
+com/example/ayuntamientoapi/config/WebSecurityConfig.class
+com/example/ayuntamientoapi/controller/AyuntamientoController.class
+com/example/ayuntamientoapi/repository/AggregatedDataRepository.class
