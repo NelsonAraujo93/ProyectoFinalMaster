@@ -1,6 +1,7 @@
 package com.example.apigateway.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,10 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
     private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 
     private final WebClient.Builder webClientBuilder;
+
+
+    @Value("${api.seguridad.url}")
+    private String seguridadUrl;
 
     @Autowired
     public AuthFilter(WebClient.Builder webClientBuilder) {
@@ -61,7 +66,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
             return webClientBuilder.build()
                     .get()
-                    .uri("http://localhost:8083/auth/validateToken")
+                    .uri(seguridadUrl + "/auth/validateToken")
                     .header(HttpHeaders.AUTHORIZATION, authHeader)
                     .retrieve()
                     .onStatus(httpStatus -> httpStatus.value() != HttpStatus.OK.value(),

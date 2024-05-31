@@ -4,6 +4,8 @@ com/example/estacionesapi/EstacionesApiApplication.class
 com/example/estacionesapi/controller/EstacionController.class
 com/example/estacionesapi/repository/EstacionLogRepository.class
 com/example/estacionesapi/exception/CustomException.class
+com/example/estacionesapi/dao/AirQualityDTO.class
 com/example/estacionesapi/domain/EstacionLog.class
 com/example/estacionesapi/domain/Estacion.class
+com/example/estacionesapi/dao/EstacionContaminantesPromedioDTO.class
 com/example/estacionesapi/service/EstacionService.class

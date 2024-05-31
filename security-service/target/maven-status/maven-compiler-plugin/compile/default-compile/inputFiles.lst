@@ -1,7 +1,8 @@
-/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/security-service/src/main/java/com/example/securityservice/config/UserConfig.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/security-service/src/main/java/com/example/securityservice/config/SecurityConfig.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/security-service/src/main/java/com/example/securityservice/repository/UserRepository.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/security-service/src/main/java/com/example/securityservice/SecurityServiceApplication.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/security-service/src/main/java/com/example/securityservice/service/JwtService.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/security-service/src/main/java/com/example/securityservice/service/UserService.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/security-service/src/main/java/com/example/securityservice/model/User.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/security-service/src/main/java/com/example/securityservice/model/AuthResponse.java
 /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/security-service/src/main/java/com/example/securityservice/controller/AuthController.java

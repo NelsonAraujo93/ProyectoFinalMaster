@@ -8,7 +8,6 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,7 +23,6 @@ public class JwtService {
                 .withClaim("roles", roles)
                 .sign(Algorithm.HMAC256(secret));
     }
-
 
     public boolean validateToken(String token) {
         try {
