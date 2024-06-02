@@ -2,7 +2,6 @@ package com.example.ayuntamientoapi.controller;
 
 import com.example.ayuntamientoapi.dao.AggregatedDataDTO;
 import com.example.ayuntamientoapi.service.AggregateDataDTOService;
-import com.example.ayuntamientoapi.service.AggregatedDataService;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @RestController
 @RequestMapping("/api/v1")
 public class AyuntamientoController {
-
-    @Autowired
-    private AggregatedDataService aggregatedDataService;
 
     @Autowired
     private AggregateDataDTOService add;
@@ -43,7 +39,7 @@ public class AyuntamientoController {
 
     @GetMapping("/aggregateData")
     public ResponseEntity<AggregatedDataDTO> aggregateData() {
-        AggregatedDataDTO aggregatedData = aggregatedDataService.aggregateData();
+        AggregatedDataDTO aggregatedData = add.aggregateData();
         return ResponseEntity.ok(aggregatedData);
     }
 

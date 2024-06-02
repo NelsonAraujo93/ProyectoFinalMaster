@@ -1,8 +1,7 @@
-com/example/ayuntamientoapi/service/AggregatedDataService.class
-com/example/ayuntamientoapi/dao/AggregatedDataDTO$AparcamientoDTO.class
-com/example/ayuntamientoapi/domain/Aparcamiento.class
 com/example/ayuntamientoapi/domain/AggregatedData.class
 com/example/ayuntamientoapi/dao/AggregatedDataDTO.class
+com/example/ayuntamientoapi/dao/AggregatedDataDTO$AparcamientoDTO.class
+com/example/ayuntamientoapi/domain/Aparcamiento.class
 com/example/ayuntamientoapi/AyuntamientoApiApplication.class
 com/example/ayuntamientoapi/config/WebSecurityConfig.class
 com/example/ayuntamientoapi/controller/AyuntamientoController.class
@@ -10,4 +9,3 @@ com/example/ayuntamientoapi/repository/AggregatedDataDTORepository.class
 com/example/ayuntamientoapi/config/ScheduledTasks.class
 com/example/ayuntamientoapi/dao/AggregatedDataDTO$AirQualityDTO.class
 com/example/ayuntamientoapi/service/AggregateDataDTOService.class
-com/example/ayuntamientoapi/repository/AggregatedDataRepository.class
