@@ -1,0 +1,88 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.0.5)
+
+2024-06-04T20:10:40.100+02:00  INFO 44492 --- [           main] c.e.apigateway.ApiGatewayApplication     : Starting ApiGatewayApplication using Java 18.0.1.1 with PID 44492 (/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/api-gateway/target/api-gateway-1.0-SNAPSHOT.jar started by vagosestudios in /Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster)
+2024-06-04T20:10:40.102+02:00  INFO 44492 --- [           main] c.e.apigateway.ApiGatewayApplication     : No active profile set, falling back to 1 default profile: "default"
+2024-06-04T20:10:40.755+02:00  INFO 44492 --- [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=02da1841-e223-344b-84ec-e17e1ac2faff
+Creating WebClient.Builder bean
+2024-06-04T20:10:41.537+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [After]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Before]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Between]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Cookie]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Header]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Host]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Method]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Path]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Query]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [ReadBody]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [RemoteAddr]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Weight]
+2024-06-04T20:10:41.538+02:00  INFO 44492 --- [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2024-06-04T20:10:41.790+02:00  INFO 44492 --- [           main] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port 8080
+2024-06-04T20:10:41.818+02:00  INFO 44492 --- [           main] c.e.apigateway.ApiGatewayApplication     : Started ApiGatewayApplication in 2.114 seconds (process running for 2.543)
+2024-06-04T20:11:04.437+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request path: /auth/authenticate
+2024-06-04T20:11:04.438+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request method: POST
+2024-06-04T20:11:04.438+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request headers: [Content-Type:"application/json", User-Agent:"PostmanRuntime/7.39.0", Accept:"*/*", Postman-Token:"06f7362c-ef32-421e-8799-6e2c7fc1ba18", Host:"localhost:8080", Accept-Encoding:"gzip, deflate, br", Connection:"keep-alive", Content-Length:"56"]
+2024-06-04T20:11:04.488+02:00 ERROR 44492 --- [ctor-http-nio-3] i.n.r.d.DnsServerAddressStreamProviders  : Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider, fallback to system defaults. This may result in incorrect DNS resolutions on MacOS. Check whether you have a dependency on 'io.netty:netty-resolver-dns-native-macos'. Use DEBUG level to see the full stack: java.lang.UnsatisfiedLinkError: failed to load the required native library
+2024-06-04T20:11:04.542+02:00 ERROR 44492 --- [ctor-http-nio-3] a.w.r.e.AbstractErrorWebExceptionHandler : [a952682c-1]  500 Server Error for HTTP POST "/auth/authenticate"
+
+io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: localhost/[0:0:0:0:0:0:0:1]:8083
+	Suppressed: reactor.core.publisher.FluxOnAssembly$OnAssemblyException: 
+Error has been observed at the following site(s):
+	*__checkpoint ⇢ org.springframework.cloud.gateway.filter.WeightCalculatorWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ HTTP POST "/auth/authenticate" [ExceptionHandlingWebHandler]
+Original Stack Trace:
+Caused by: java.net.ConnectException: Connection refused
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method) ~[na:na]
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:672) ~[na:na]
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:946) ~[na:na]
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:337) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:776) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.90.Final.jar!/:4.1.90.Final]
+	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na]
+
+2024-06-04T20:11:23.142+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request path: /api/v1/aparcamientos
+2024-06-04T20:11:23.144+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request method: GET
+2024-06-04T20:11:23.144+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request headers: [Authorization:"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlzcyI6ImF1dGgwIn0.hdNDGhByHFyRxCIZU2-qOsWN5UlbGfxbgPvpLOgK8wE", User-Agent:"PostmanRuntime/7.39.0", Accept:"*/*", Postman-Token:"c577b728-0d51-4b36-9716-29f5647bdbf8", Host:"localhost:8080", Accept-Encoding:"gzip, deflate, br", Connection:"keep-alive"]
+2024-06-04T20:11:23.154+02:00 ERROR 44492 --- [ctor-http-nio-3] a.w.r.e.AbstractErrorWebExceptionHandler : [a952682c-2]  500 Server Error for HTTP GET "/api/v1/aparcamientos"
+
+io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: localhost/[0:0:0:0:0:0:0:1]:8081
+	Suppressed: reactor.core.publisher.FluxOnAssembly$OnAssemblyException: 
+Error has been observed at the following site(s):
+	*__checkpoint ⇢ org.springframework.cloud.gateway.filter.WeightCalculatorWebFilter [DefaultWebFilterChain]
+	*__checkpoint ⇢ HTTP GET "/api/v1/aparcamientos" [ExceptionHandlingWebHandler]
+Original Stack Trace:
+Caused by: java.net.ConnectException: Connection refused
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method) ~[na:na]
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:672) ~[na:na]
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:946) ~[na:na]
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:337) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:334) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:776) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[netty-transport-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.90.Final.jar!/:4.1.90.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.90.Final.jar!/:4.1.90.Final]
+	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na]
+
+2024-06-04T20:12:09.517+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request path: /api/v1/aparcamientos
+2024-06-04T20:12:09.523+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request method: GET
+2024-06-04T20:12:09.524+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request headers: [Authorization:"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlzcyI6ImF1dGgwIn0.hdNDGhByHFyRxCIZU2-qOsWN5UlbGfxbgPvpLOgK8wE", User-Agent:"PostmanRuntime/7.39.0", Accept:"*/*", Postman-Token:"1f113e17-c323-4f70-9a06-a44374c39a3e", Host:"localhost:8080", Accept-Encoding:"gzip, deflate, br", Connection:"keep-alive"]
+2024-06-04T20:12:20.494+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request path: /api/v1/estaciones
+2024-06-04T20:12:20.504+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request method: GET
+2024-06-04T20:12:20.505+02:00  INFO 44492 --- [ctor-http-nio-3] c.e.apigateway.filter.LoggingFilter      : Request headers: [User-Agent:"PostmanRuntime/7.39.0", Accept:"*/*", Postman-Token:"484e5e07-7457-459b-9763-df1a349b356f", Host:"localhost:8080", Accept-Encoding:"gzip, deflate, br", Connection:"keep-alive"]
