@@ -3,47 +3,72 @@ package com.example.securityservice.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
+import com.example.securityservice.repository.BlacklistedTokenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class JwtService {
 
     @Value("${jwt.secret}")
-    private String secret;
+    private String secretKey;
+
+    @Value("${jwt.expiration}")
+    private long expirationTime;
+
+    @Value("${jwt.issuer}")
+    private String issuer;
+
+    @Autowired
+    private BlacklistedTokenRepository blacklistedTokenRepository;
 
     public String generateToken(String username, List<String> roles) {
         return JWT.create()
                 .withSubject(username)
-                .withIssuer("auth0")
+                .withIssuer(issuer)
                 .withClaim("roles", roles)
-                .sign(Algorithm.HMAC256(secret));
+                .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
+                .sign(Algorithm.HMAC512(secretKey.getBytes()));
     }
 
     public boolean validateToken(String token) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer("auth0")
-                    .build();
-            DecodedJWT jwt = verifier.verify(token);
-            return jwt != null;
-        } catch (JWTVerificationException exception) {
+            // Verificar si el token está en la lista negra
+            if (isTokenBlacklisted(token)) {
+                return false;
+            }
+            JWT.require(Algorithm.HMAC512(secretKey.getBytes()))
+                .withIssuer(issuer)
+                .build()
+                .verify(token);
+            return true;
+        } catch (JWTVerificationException e) {
             return false;
         }
     }
 
     public String getUsernameFromToken(String token) {
-        DecodedJWT jwt = JWT.decode(token);
-        return jwt.getSubject();
+        return JWT.require(Algorithm.HMAC512(secretKey.getBytes()))
+                .withIssuer(issuer)
+                .build()
+                .verify(token)
+                .getSubject();
     }
 
     public List<String> getRolesFromToken(String token) {
-        DecodedJWT jwt = JWT.decode(token);
-        return jwt.getClaim("roles").asList(String.class);
+        return JWT.require(Algorithm.HMAC512(secretKey.getBytes()))
+                .withIssuer(issuer)
+                .build()
+                .verify(token)
+                .getClaim("roles")
+                .asList(String.class);
+    }
+
+    private boolean isTokenBlacklisted(String token) {
+        return blacklistedTokenRepository.findByToken(token).isPresent();
     }
 }

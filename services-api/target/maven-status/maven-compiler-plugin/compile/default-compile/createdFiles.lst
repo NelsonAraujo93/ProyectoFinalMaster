@@ -1,0 +1,14 @@
+com/example/services/service/CommentService.class
+com/example/services/ServicesApplication.class
+com/example/services/model/ClientService.class
+com/example/services/service/ClientServiceService.class
+com/example/services/controller/CommentController.class
+com/example/services/service/ServicioService.class
+com/example/services/controller/PYMEServicesController.class
+com/example/services/model/Servicio.class
+com/example/services/repository/ServiceRepository.class
+com/example/services/controller/ServiceController.class
+com/example/services/controller/ClientServiceController.class
+com/example/services/model/Comment.class
+com/example/services/repository/CommentRepository.class
+com/example/services/repository/ClientServiceRepository.class

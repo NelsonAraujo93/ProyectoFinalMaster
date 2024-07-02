@@ -1,0 +1,14 @@
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/repository/ServiceRepository.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/controller/ServiceController.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/controller/CommentController.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/controller/ClientServiceController.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/service/ServicioService.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/model/Comment.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/repository/ClientServiceRepository.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/repository/CommentRepository.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/controller/PYMEServicesController.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/model/ClientService.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/service/CommentService.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/model/Servicio.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/service/ClientServiceService.java
+/Users/vagosestudios/Desktop/UV/ProyectoFinal/ProyectoFinalMaster/services-api/src/main/java/com/example/serviceapi/ServicesApplication.java
