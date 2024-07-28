@@ -18,6 +18,6 @@ public class BlacklistedTokenService {
     }
 
     public boolean isTokenBlacklisted(String token) {
-        return blacklistedTokenRepository.findByToken(token).isPresent();
+        return blacklistedTokenRepository.existsByToken(token);
     }
 }

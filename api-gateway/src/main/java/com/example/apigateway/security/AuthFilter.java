@@ -22,8 +22,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
     private final WebClient.Builder webClientBuilder;
 
-
-    @Value("${api.seguridad.url}")
+    @Value("${api.security.url}")
     private String seguridadUrl;
 
     @Autowired
@@ -43,13 +42,13 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
             if (path.startsWith("/auth")) {
                 return chain.filter(exchange);
             }
-
             if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 logger.warn("Bearer token is missing in header");
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return response.writeWith(Mono.just(response.bufferFactory().wrap("Bearer token is missing in header".getBytes())));
             }
 
+            @SuppressWarnings("null")
             String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             if (!authHeader.startsWith("Bearer ")) {
                 logger.warn("Bearer token is not present");
@@ -64,65 +63,92 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                 return response.writeWith(Mono.just(response.bufferFactory().wrap("Token is empty".getBytes())));
             }
 
+            logger.info("Token to validate: {}", token);
+
             return webClientBuilder.build()
                     .get()
                     .uri(seguridadUrl + "/auth/validateToken")
                     .header(HttpHeaders.AUTHORIZATION, authHeader)
                     .retrieve()
-                    .onStatus(httpStatus -> httpStatus.value() != HttpStatus.OK.value(),
-                                error -> Mono.error(new Throwable("UNAUTHORIZED")))
+                    .onStatus(httpStatus -> {
+                        logger.error("Received error status: {}", httpStatus);
+                        return httpStatus.value() != HttpStatus.OK.value();
+                    }, error -> {
+                        logger.error("Error during token validation: {}", error);
+                        return Mono.error(new Throwable("UNAUTHORIZED"));
+                    })
                     .bodyToMono(AuthValidationResponse.class)
                     .flatMap(authValidationResponse -> {
-                        logger.info("Token validated for user: {}", authValidationResponse.getUsername());
+                        logger.info("Token validated for user: {}", authValidationResponse.getUserId());
                         logger.info("User roles: {}", authValidationResponse.getRoles());
-                        logger.info("Required role: {}", config.getRole());
+                        logger.info("Required role: {}", config.getRoles());
 
-                        if (authValidationResponse.getUsername() == null || authValidationResponse.getUsername().isEmpty()) {
-                            logger.warn("Invalid token: no username found");
+                        if (authValidationResponse.isTokenBlacklisted()) {
+                            logger.warn("Token is blacklisted");
+                            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                            return response.writeWith(Mono.just(response.bufferFactory().wrap("Token is blacklisted".getBytes())));
+                        }
+
+                        if (authValidationResponse.getUserId() == null) {
+                            logger.warn("Invalid token: no user ID found");
                             response.setStatusCode(HttpStatus.UNAUTHORIZED);
                             return response.writeWith(Mono.just(response.bufferFactory().wrap("Invalid token".getBytes())));
                         }
 
-                        if (!authValidationResponse.getRoles().contains(config.getRole())) {
-                            logger.warn("Insufficient role for user: {}", authValidationResponse.getUsername());
+                        if (config.getRoles().stream().noneMatch(authValidationResponse.getRoles()::contains)) {
+                            logger.warn("Insufficient role for user: {}", authValidationResponse.getUserId());
                             response.setStatusCode(HttpStatus.UNAUTHORIZED);
                             return response.writeWith(Mono.just(response.bufferFactory().wrap("Insufficient role".getBytes())));
                         }
 
-                        exchange.getRequest().mutate().header("x-auth-user-id", authValidationResponse.getUsername());
+                        exchange.getRequest().mutate()
+                                .header("x-auth-user-id", String.valueOf(authValidationResponse.getUserId()))
+                                .header("x-auth-user-name", authValidationResponse.getUsername())
+                                .header("x-auth-user-roles", String.join(",", authValidationResponse.getRoles()));
+
                         return chain.filter(exchange);
                     }).onErrorResume(e -> {
                         logger.error("Token validation error: ", e);
                         response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                        return response.writeWith(Mono.just(response.bufferFactory().wrap("Token is corrupt".getBytes())));
+                        return response.writeWith(Mono.just(response.bufferFactory().wrap(("Authorization error: " + e.getMessage()).getBytes())));
                     });
         };
     }
 
     public static class Config {
-        private String role;
-
+        private List<String> roles;
+    
         public Config() {
         }
-
-        public Config(String role) {
-            this.role = role;
+    
+        public Config(List<String> roles) {
+            this.roles = roles;
         }
-
-        public String getRole() {
-            return role;
+    
+        public List<String> getRoles() {
+            return roles;
         }
-
-        public void setRole(String role) {
-            this.role = role;
+    
+        public void setRoles(List<String> roles) {
+            this.roles = roles;
         }
     }
-
+    
     public static class AuthValidationResponse {
+        private Long userId;
         private String username;
         private List<String> roles;
+        private boolean isTokenBlacklisted;
 
         // Getters and Setters
+        public Long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
+
         public String getUsername() {
             return username;
         }
@@ -137,6 +163,14 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
         public void setRoles(List<String> roles) {
             this.roles = roles;
+        }
+
+        public boolean isTokenBlacklisted() {
+            return isTokenBlacklisted;
+        }
+
+        public void setTokenBlacklisted(boolean tokenBlacklisted) {
+            isTokenBlacklisted = tokenBlacklisted;
         }
     }
 }

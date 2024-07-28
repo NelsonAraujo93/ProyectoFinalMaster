@@ -1,0 +1,5 @@
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:17-jdk-alpine
+
+COPY target/services-api-1.0-SNAPSHOT.jar services-api.jar
+ENTRYPOINT ["java","-jar","/services-api.jar"]

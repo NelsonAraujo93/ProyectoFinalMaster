@@ -1,7 +1,9 @@
 package com.example.securityservice.controller;
 
+import com.example.securityservice.dto.UserDTO;
 import com.example.securityservice.model.AuthRequest;
 import com.example.securityservice.model.AuthResponse;
+import com.example.securityservice.model.AuthResponseUser;
 import com.example.securityservice.model.User;
 import com.example.securityservice.service.BlacklistedTokenService;
 import com.example.securityservice.service.JwtService;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -32,27 +35,63 @@ public class AuthController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<String> authenticate(@RequestBody AuthRequest authRequest) {
-        User user = userService.findByUsername(authRequest.getUsername());
+    public ResponseEntity<AuthResponseUser> authenticate(@RequestBody AuthRequest authRequest) {
+        User user = userService.findByUsername(authRequest.getUsername()).orElse(null);
         if (user != null && passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
-            String token = jwtService.generateToken(user.getUsername(), user.getRoles());
-            return ResponseEntity.ok(token);
+            String token = jwtService.generateToken(user.getId(), user.getUsername(), user.getRoleNames());
+
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId());
+            userDTO.setUsername(user.getUsername());
+            userDTO.setRoles(user.getRoleNames());
+            userDTO.setEnabled(user.isEnabled());
+
+            AuthResponseUser authResponse = new AuthResponseUser(token, userDTO, false);
+            return ResponseEntity.ok(authResponse);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponseUser("Invalid username or password", true));
         }
+    }
+
+    @PostMapping("/register/client")
+    public ResponseEntity<String> registerClient(@RequestBody UserDTO userDTO) {
+        return registerUser(userDTO, "CLIENT");
+    }
+
+    @PostMapping("/register/pyme")
+    public ResponseEntity<String> registerPyme(@RequestBody UserDTO userDTO) {
+        return registerUser(userDTO, "PYME");
+    }
+
+    private ResponseEntity<String> registerUser(UserDTO userDTO, String role) {
+        if (userService.existsByUsername(userDTO.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username is already taken");
+        }
+
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userDTO.setEnabled(true);
+        userDTO.setRoles(Collections.singletonList(role)); // Add role to DTO
+
+        userService.save(userDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully with role: " + role);
     }
 
     @GetMapping("/validateToken")
     public ResponseEntity<AuthResponse> validateToken(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
+        if (blacklistedTokenService.isTokenBlacklisted(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Token is blacklisted", true));
+        }
         boolean isValid = jwtService.validateToken(token);
         if (isValid) {
+            Long userId = jwtService.getUserIdFromToken(token);
             String username = jwtService.getUsernameFromToken(token);
             List<String> roles = jwtService.getRolesFromToken(token);
-            AuthResponse response = new AuthResponse(username, roles);
+            AuthResponse response = new AuthResponse(userId, username, roles, false);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Invalid token"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Invalid token", true));
         }
     }
 

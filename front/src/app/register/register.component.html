@@ -1,0 +1,10 @@
+<div class="register-selection" *ngIf="!selectedType">
+  <h2>Select User Type</h2>
+  <div class="card" (click)="selectType('client')">Client</div>
+  <div class="card" (click)="selectType('pyme')">Pyme</div>
+</div>
+
+<app-register-client *ngIf="selectedType === 'client'"></app-register-client>
+<app-register-pyme *ngIf="selectedType === 'pyme'"></app-register-pyme>
+
+<button *ngIf="selectedType" (click)="goBack()">Go Back</button>

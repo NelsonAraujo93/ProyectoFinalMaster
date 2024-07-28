@@ -1,6 +1,9 @@
 package com.example.securityservice.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.List;
 
 @Entity
@@ -10,15 +13,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "role")
-    private List<String> roles;
+    @Column(nullable = false)
+    private boolean enabled = true;
 
-    private boolean enabled;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private Set<UserRole> roles;
 
     // Getters and Setters
     public Long getId() {
@@ -45,19 +51,28 @@ public class User {
         this.password = password;
     }
 
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Set<UserRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<UserRole> roles) {
+        this.roles = roles;
+        for (UserRole role : roles) {
+            role.setUser(this);
+        }
+    }
+
+    public List<String> getRoleNames() {
+        return roles.stream()
+                .map(UserRole::getRole)
+                .collect(Collectors.toList());
     }
 }

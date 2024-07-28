@@ -7,13 +7,13 @@ import jakarta.persistence.Id;
 
 @Entity
 public class BlacklistedToken {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String token;
 
-    // Getters y setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }

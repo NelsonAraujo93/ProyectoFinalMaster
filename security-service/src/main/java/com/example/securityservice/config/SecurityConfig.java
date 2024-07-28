@@ -16,25 +16,23 @@ public class SecurityConfig {
 
     @Bean
     SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http.csrf(csrf -> csrf.disable()
-            .formLogin(login -> login.disable()
-                    .logout(logout -> logout.disable()
-                    .authorizeExchange(exchanges -> exchanges
-                                    .pathMatchers("/auth/**").permitAll()
-                                    .anyExchange().authenticated()
-                    )
-                    .exceptionHandling(handling -> handling
-                        .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> {
-                            swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                        }))
-                        .accessDeniedHandler((swe, e) -> Mono.fromRunnable(() -> {
-                            swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                        }))
-                    )
-                )
+        return http
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+            .logout(ServerHttpSecurity.LogoutSpec::disable)
+            .authorizeExchange(exchanges -> exchanges
+                .pathMatchers("/auth/**").permitAll()
+                .anyExchange().authenticated()
             )
-        )
-        .build();
+            .exceptionHandling(handling -> handling
+                .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> {
+                    swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                }))
+                .accessDeniedHandler((swe, e) -> Mono.fromRunnable(() -> {
+                    swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                }))
+            )
+            .build();
     }
 
     @Bean

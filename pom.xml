@@ -10,9 +10,9 @@
     <modules>
         <module>security-service</module>
         <module>api-gateway</module>
-        <module>bicis-api</module>
-        <module>estaciones-api</module>
-        <module>ayuntamiento-api</module>
+        <module>users-api</module>
+        <module>services-api</module>
+        <module>eureka-server</module>
     </modules>
 
     <properties>
