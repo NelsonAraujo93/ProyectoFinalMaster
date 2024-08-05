@@ -8,11 +8,11 @@ import { ClientGuard } from './guards/client.guard';
 import { PymeGuard } from './guards/pyme.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'client-dashboard', component: ClientDashboardComponent, canActivate: [ClientGuard] },
   { path: 'pyme-dashboard', component: PymeDashboardComponent, canActivate: [PymeGuard] },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', redirectTo: '' }
-
 ];

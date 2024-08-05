@@ -1,7 +1,19 @@
 <div class="register-selection" *ngIf="!selectedType">
-  <h2>Select User Type</h2>
-  <div class="card" (click)="selectType('client')">Client</div>
-  <div class="card" (click)="selectType('pyme')">Pyme</div>
+  <app-bg-circle></app-bg-circle>
+  <h1>Te damos la bienvenida</h1>
+  <p>¿Cómo deseas Registrate?</p>
+  <div class="cards-container">
+    <div class="card">
+      <h2>Cliente</h2>
+      <p>Registrate como cliente</p>
+      <button (click)="selectType('client')">Ser Cliente</button>
+    </div>
+    <div class="card">
+      <h2>Pyme</h2>
+      <p>Registrate como Pyme</p>
+      <button (click)="selectType('pyme')">Ser Pyme</button>
+    </div>
+  </div>
 </div>
 
 <app-register-client *ngIf="selectedType === 'client'"></app-register-client>

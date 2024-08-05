@@ -1,4 +1,6 @@
 <div class="login-container">
+  <app-bg-circle></app-bg-circle>
+  <h2>Iniciar sesión</h2>
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="username">Username:</label>
@@ -18,7 +20,7 @@
         </small>
       </div>
     </div>
-
     <button type="submit" [disabled]="loginForm.invalid">Login</button>
   </form>
+  <p>¿No tienes cuenta? <a routerLink="/register">Registrate aquí</a></p>
 </div>

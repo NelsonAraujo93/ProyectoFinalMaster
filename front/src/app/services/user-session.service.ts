@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Client, Pyme } from '../app.models';
 
 interface UserResponse {
@@ -54,22 +54,55 @@ export class UserSessionService {
     return this.http.post<any>(`${this.apiBaseUrl}/register/pyme`, pyme);
   }
 
+  
   logout(): Observable<any> {
-    return this.http.post<any>(`${this.apiBaseUrl}/logout`, {}).pipe(
+    const token = this.currentUserSubject.value?.token;
+    if (!token) {
+      return new Observable(observer => {
+        observer.error('No token found');
+        observer.complete();
+      });
+    }
+  
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  
+    return this.http.post(`${this.apiBaseUrl}/logout`, {}, { headers, responseType: 'text' }).pipe(
       map(() => {
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
         this.router.navigate(['/login']);
+      }),
+      catchError(error => {
+        console.error('Logout error', error);
+        return new Observable(observer => {
+          observer.error('Logout failed');
+          observer.complete();
+        });
       })
     );
   }
-
+  
   isClient(): boolean {
     return this.currentUserValue?.userType === 'client';
   }
 
   isPyme(): boolean {
     return this.currentUserValue?.userType === 'pyme';
+  }
+
+  validateToken(): Observable<UserResponse> {
+    return this.http.get<UserResponse>(`${this.apiBaseUrl}/validate-token`).pipe(
+      map(response => {
+        const userType = response.data.roles.includes('PYME') ? 'pyme' : 'client';
+        const user = {
+          ...response,
+          userType: userType
+        };
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+        return user;
+      })
+    );
   }
 
   isLoggedIn(): boolean {

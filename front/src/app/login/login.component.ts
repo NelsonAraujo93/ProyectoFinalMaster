@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserSessionService } from '../services/user-session.service';
 import { LoginForm } from '../app.models';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { BgCircleComponent } from '../layout/bg-circle/bg-circle.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, NgOptimizedImage, RouterLink, BgCircleComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.less']
 })
