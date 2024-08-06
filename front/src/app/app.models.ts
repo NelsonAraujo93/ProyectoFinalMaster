@@ -5,11 +5,11 @@ export interface LoginForm {
 
 export interface User {
   username: string;
-  password: string | null;
+  password: string;
   roles: string[];
   enabled: boolean;
   dni: string;
-  postalCode: string;
+  postalCode: number;
 }
 
 export interface Client extends User {}

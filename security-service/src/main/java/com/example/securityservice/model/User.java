@@ -19,6 +19,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(unique = true, nullable = false)
+    private String dni;
+
+    @Column(name = "postal_code", nullable = false)
+    private Integer postalCode;
+
     @Column(nullable = false)
     private boolean enabled = true;
 
@@ -57,6 +63,22 @@ public class User {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    public Integer getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(Integer postalCode) {
+        this.postalCode = postalCode;
     }
 
     public Set<UserRole> getRoles() {

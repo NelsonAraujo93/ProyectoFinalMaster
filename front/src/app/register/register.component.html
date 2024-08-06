@@ -1,22 +1,21 @@
-<div class="register-selection" *ngIf="!selectedType">
+<div class="register-selection">
   <app-bg-circle></app-bg-circle>
-  <h1>Te damos la bienvenida</h1>
-  <p>¿Cómo deseas Registrate?</p>
-  <div class="cards-container">
-    <div class="card">
-      <h2>Cliente</h2>
-      <p>Registrate como cliente</p>
-      <button (click)="selectType('client')">Ser Cliente</button>
-    </div>
-    <div class="card">
-      <h2>Pyme</h2>
-      <p>Registrate como Pyme</p>
-      <button (click)="selectType('pyme')">Ser Pyme</button>
+  <div *ngIf="!selectedType">
+    <h1>Te damos la bienvenida</h1>
+    <p>¿Cómo deseas Registrate?</p>
+    <div class="cards-container">
+      <div class="card">
+        <h2>Cliente</h2>
+        <p>Registrate como cliente</p>
+        <button (click)="selectType('client')">Ser Cliente</button>
+      </div>
+      <div class="card">
+        <h2>Pyme</h2>
+        <p>Registrate como Pyme</p>
+        <button (click)="selectType('pyme')">Ser Pyme</button>
+      </div>
     </div>
   </div>
+  <app-register-client *ngIf="selectedType === 'client'" [goBack]="goBack.bind(this)"></app-register-client>
+  <app-register-pyme *ngIf="selectedType === 'pyme'" [goBack]="goBack.bind(this)"></app-register-pyme>
 </div>
-
-<app-register-client *ngIf="selectedType === 'client'"></app-register-client>
-<app-register-pyme *ngIf="selectedType === 'pyme'"></app-register-pyme>
-
-<button *ngIf="selectedType" (click)="goBack()">Go Back</button>

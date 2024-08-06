@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserSessionService } from '../services/user-session.service';
@@ -12,6 +12,7 @@ import { Client } from '../app.models';
   styleUrls: ['./register-client.component.less']
 })
 export class RegisterClientComponent {
+  @Input() goBack!: () => void;
   registerForm: FormGroup;
   error: string | null = null;
 
@@ -32,11 +33,11 @@ export class RegisterClientComponent {
     if (this.registerForm.valid) {
       const clientData: Client = this.registerForm.value;
       this.userSessionService.registerClient(clientData).subscribe({
-        next: () => {
+        next: (response) => {
           this.router.navigate(['/login']);
         },
-        error: err => {
-          this.error = 'Registration failed', err;
+        error: (err) => {
+          this.error = 'Registration failed: ' + err.message;
         }
       });
     }

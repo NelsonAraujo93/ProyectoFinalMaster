@@ -47,13 +47,28 @@ export class UserSessionService {
   }
 
   registerClient(client: any): Observable<any> {
-    return this.http.post<any>(`${this.apiBaseUrl}/register/client`, client);
+    return this.http.post<any>(`${this.apiBaseUrl}/register/client`, client).pipe(
+      map(response => {
+        return response;
+      }),
+      catchError(err => {
+        throw err;
+      })
+    );
   }
 
-  registerPyme(pyme: any): Observable<any> {
-    return this.http.post<any>(`${this.apiBaseUrl}/register/pyme`, pyme);
+  registerPyme(pyme: Pyme): Observable<any> {
+    return this.http.post<any>(`${this.apiBaseUrl}/register/pyme`, pyme).pipe(
+      map(response => {
+        console.log('API response:', response);
+        return response;
+      }),
+      catchError(err => {
+        console.error('API error:', err);
+        throw err;
+      })
+    );
   }
-
   
   logout(): Observable<any> {
     const token = this.currentUserSubject.value?.token;

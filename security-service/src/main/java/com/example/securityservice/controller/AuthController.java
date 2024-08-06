@@ -40,11 +40,7 @@ public class AuthController {
         if (user != null && passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
             String token = jwtService.generateToken(user.getId(), user.getUsername(), user.getRoleNames());
 
-            UserDTO userDTO = new UserDTO();
-            userDTO.setId(user.getId());
-            userDTO.setUsername(user.getUsername());
-            userDTO.setRoles(user.getRoleNames());
-            userDTO.setEnabled(user.isEnabled());
+            UserDTO userDTO = userService.convertToDto(user);
 
             AuthResponseUser authResponse = new AuthResponseUser(token, userDTO, false);
             return ResponseEntity.ok(authResponse);
@@ -54,18 +50,18 @@ public class AuthController {
     }
 
     @PostMapping("/register/client")
-    public ResponseEntity<String> registerClient(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Object> registerClient(@RequestBody UserDTO userDTO) {
         return registerUser(userDTO, "CLIENT");
     }
 
     @PostMapping("/register/pyme")
-    public ResponseEntity<String> registerPyme(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Object> registerPyme(@RequestBody UserDTO userDTO) {
         return registerUser(userDTO, "PYME");
     }
 
-    private ResponseEntity<String> registerUser(UserDTO userDTO, String role) {
+    private ResponseEntity<Object> registerUser(UserDTO userDTO, String role) {
         if (userService.existsByUsername(userDTO.getUsername())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username is already taken");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap("message", "Username is already taken"));
         }
 
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
@@ -74,7 +70,7 @@ public class AuthController {
 
         userService.save(userDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully with role: " + role);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Collections.singletonMap("message", "User created successfully with role: " + role));
     }
 
     @GetMapping("/validateToken")

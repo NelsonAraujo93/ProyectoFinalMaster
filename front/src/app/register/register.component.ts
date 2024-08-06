@@ -13,12 +13,13 @@ import { BgCircleComponent } from '../layout/bg-circle/bg-circle.component';
 })
 export class RegisterComponent {
   selectedType: 'client' | 'pyme' | null = null;
-
+  
   selectType(type: 'client' | 'pyme') {
     this.selectedType = type;
   }
 
   goBack() {
+    debugger;
     this.selectedType = null;
   }
 }

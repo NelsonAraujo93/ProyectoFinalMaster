@@ -1,3 +1,4 @@
+com/example/securityservice/model/Pyme.class
 com/example/securityservice/dto/UserDTO.class
 com/example/securityservice/model/AuthResponseUser.class
 com/example/securityservice/config/SecurityConfig.class
@@ -7,8 +8,8 @@ com/example/securityservice/repository/BlacklistedTokenRepository.class
 com/example/securityservice/service/UserService.class
 com/example/securityservice/repository/UserRepository.class
 com/example/securityservice/model/UserRole.class
-com/example/securityservice/init/AdminInitialization.class
 com/example/securityservice/repository/UserRoleRepository.class
+com/example/securityservice/repository/PymeRepository.class
 com/example/securityservice/model/AuthResponse.class
 com/example/securityservice/model/User.class
 com/example/securityservice/model/UserRoleId.class
