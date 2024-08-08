@@ -4,6 +4,7 @@ export interface LoginForm {
 }
 
 export interface User {
+  id: number;
   username: string;
   password: string;
   roles: string[];
@@ -23,5 +24,31 @@ export interface Pyme extends User {
 }
 
 export interface Service {
-  // Define the Service interface when the details are known
+  id?: number;
+  name: string;
+  description: string;
+  price: number;
+  userId: number;
 }
+
+export interface MenuItem {
+  icon: string;
+  text: string;
+}
+
+export type PymeMenu = Record<string, MenuItem>;
+
+export const pymeMenu: PymeMenu = {
+  'services': {
+    icon: 'engineering',
+    text: 'Services'
+  },
+  'requests': {
+    icon: 'request_quote',
+    text: 'Requests'
+  },
+  'history': {
+    icon: 'history',
+    text: 'History'
+  }
+};

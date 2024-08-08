@@ -1,1 +1,26 @@
-<p>profile works!</p>
+<div class="container-profile">
+    <div class="user-data">
+        <mat-icon aria-hidden="false">profile</mat-icon>
+        <div>
+            <h2>{{user.username}}</h2>
+            <p>{{user.dni}}</p>
+            <p>{{user.postalCode}}</p>
+        </div>
+        <div class="resume">
+            <h3>Active services</h3>
+            <p>2</p>
+        </div>
+    </div>
+    <div class="pyme-data" *ngIf="user.pymeName">
+        <h2>{{user.pymeName}}</h2>
+        <p>{{user.pymeDescription}}</p>
+        <p>{{user.pymePostalCode}}</p>
+        <p>{{user.pymePhone}}</p>
+    </div>
+    <ng-container *ngIf="user.pymeName">
+        <app-pyme-dashboard></app-pyme-dashboard>
+    </ng-container>
+    <ng-container *ngIf="!user.pymeName">
+        <app-client-dashboard></app-client-dashboard>
+    </ng-container>
+</div>

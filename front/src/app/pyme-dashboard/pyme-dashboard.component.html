@@ -1,1 +1,43 @@
-<p>pyme-dashboard works!</p>
+<div class="container-pyme">
+  <div class="user-data">
+    <div class="icon-container">
+      <mat-icon class="person-icon" aria-hidden="false" aria-label="person-icon" fontIcon="person"></mat-icon>
+    </div>
+    <div class="user-data-container">
+      <div class="profile-info-item">
+        <h3>User info:</h3>
+        <h2>{{user.username}}</h2>
+      </div>
+      <div class="profile-info-item">
+        <mat-icon class="icon" aria-hidden="false" aria-label="fingerprint-icon" fontIcon="fingerprint"></mat-icon>
+        <p>{{user.dni}}</p>
+      </div>
+      <div class="profile-info-item">
+        <mat-icon class="icon" aria-hidden="false" aria-label="location_on-icon" fontIcon="location_on"></mat-icon>
+        <p>{{user.postalCode}}</p>
+      </div>
+    </div>
+    <div class="pyme-data-container">
+      <div class="profile-info-item">
+        <h3>Pyme info:</h3>
+        <h2>{{user.pymeName}}</h2>
+      </div>
+      <div class="profile-info-item">
+        <mat-icon class="icon" aria-hidden="false" aria-label="phone-icon" fontIcon="phone"></mat-icon>
+        <p>{{user.pymePhone}}</p>
+      </div>
+      <div class="profile-info-item">
+        <mat-icon class="icon" aria-hidden="false" aria-label="location-icon" fontIcon="location_on"></mat-icon>
+        <p>{{user.pymePostalCode}}</p>
+      </div>
+    </div>
+    <div class="resume">
+      <h2>Active services</h2>
+      <p>{{services.length}}</p>
+    </div>
+  </div>
+  <div class="menu">
+    <app-pyme-side-bar></app-pyme-side-bar>
+    <app-pyme-menu></app-pyme-menu>
+  </div>
+</div>
