@@ -1,7 +1,7 @@
--- Create database if it doesn't exist
+-- Create Users database if it doesn't exist
 CREATE DATABASE IF NOT EXISTS Users;
 
--- Use the database
+-- Use the Users database
 USE Users;
 
 -- Create users table
@@ -65,12 +65,12 @@ CREATE DATABASE IF NOT EXISTS Services;
 -- Use the Services database
 USE Services;
 
--- Create service table
+-- Create service table with reference to pyme table in Users database
 CREATE TABLE IF NOT EXISTS service (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     price DOUBLE NOT NULL,
-    user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES Users.users(id)
+    pyme_id INT NOT NULL,
+    FOREIGN KEY (pyme_id) REFERENCES Users.pyme(id) ON DELETE CASCADE
 );

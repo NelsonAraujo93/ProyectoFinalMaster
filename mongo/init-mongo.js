@@ -10,3 +10,13 @@ db.service_requests.insertMany([
         status: "PENDING"
     }
 ]);
+
+db.createCollection('service_rating');
+
+db.service_rating.insertMany([
+    {
+        serviceId: 1,
+        clientId: 2,
+        rating: 5
+    }
+]);

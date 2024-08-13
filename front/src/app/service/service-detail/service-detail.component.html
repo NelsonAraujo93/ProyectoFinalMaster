@@ -1,0 +1,22 @@
+<div class="service" *ngIf="service">
+  <div class="service-info">
+    <div class="service-title">
+      <h1>{{ service.name }}</h1>
+      <p><strong>Description:</strong> {{ service.description }}</p>
+      <p><strong>Price:</strong> {{ service.price | currency }}</p>
+      <button class="main-btn" (click)="requestService()">Request</button>
+    </div>
+  </div>
+  <div class="pyme-info">
+    <h3>Pyme Information</h3>
+    <p><strong>Name:</strong> {{ service.pyme.pymeName }}</p>
+    <p><strong>Description:</strong> {{ service.pyme.pymeDescription }}</p>
+    <p><strong>Postal:</strong> {{ service.pyme.pymePostalCode }}</p>
+    <p><strong>Phone:</strong> {{ service.pyme.pymePhone }}</p>
+    <a [routerLink]="['/pymes', service.pyme.id]">
+      <div class="fake-btn">
+        View Pyme
+      </div>
+    </a>
+  </div>
+</div>

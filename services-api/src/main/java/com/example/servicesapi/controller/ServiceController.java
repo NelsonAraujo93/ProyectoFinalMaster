@@ -1,8 +1,12 @@
 package com.example.servicesapi.controller;
 
+import com.example.servicesapi.dto.ServiceDTO;
+import com.example.servicesapi.model.Pyme;
 import com.example.servicesapi.model.ServiceModel;
+import com.example.servicesapi.repository.PymeRepository;
 import com.example.servicesapi.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +20,31 @@ public class ServiceController {
     @Autowired
     private ServiceService serviceService;
 
-    @PostMapping
-    public ResponseEntity<ServiceModel> createService(
+    @Autowired
+    private PymeRepository pymeRepository;
+
+   @PostMapping
+    public ResponseEntity<ServiceDTO> createService(
             @RequestBody ServiceModel service,
             @RequestHeader("x-auth-user-id") Long userId) {
-        service.setUserId(userId);
+        Optional<Pyme> pymeOptional = pymeRepository.findByUserId(userId);
+        if (!pymeOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        service.setPyme(pymeOptional.get());
         ServiceModel createdService = serviceService.createService(service);
-        return ResponseEntity.ok(createdService);
+
+        // Convert ServiceModel to ServiceDTO
+        ServiceDTO serviceDTO = new ServiceDTO();
+        serviceDTO.setId(createdService.getId());
+        serviceDTO.setName(createdService.getName());
+        serviceDTO.setDescription(createdService.getDescription());
+        serviceDTO.setPrice(createdService.getPrice());
+        serviceDTO.setPymeId(createdService.getPyme().getId());
+
+        return ResponseEntity.ok(serviceDTO);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ServiceModel> getServiceById(
@@ -46,8 +67,7 @@ public class ServiceController {
             @RequestBody ServiceModel service,
             @RequestHeader("x-auth-user-id") Long userId) {
         service.setId(id);
-        service.setUserId(userId);
-        ServiceModel updatedService = serviceService.updateService(service);
+        ServiceModel updatedService = serviceService.updateService(service, userId);
         return ResponseEntity.ok(updatedService);
     }
 

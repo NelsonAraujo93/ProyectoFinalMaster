@@ -32,6 +32,9 @@ public class User {
     @JsonManagedReference
     private Set<UserRole> roles;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Pyme pyme;
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -96,5 +99,14 @@ public class User {
         return roles.stream()
                 .map(UserRole::getRole)
                 .collect(Collectors.toList());
+    }
+
+    public Pyme getPyme() {
+        return pyme;
+    }
+
+    public void setPyme(Pyme pyme) {
+        this.pyme = pyme;
+        pyme.setUser(this);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.securityservice.controller;
 
+import com.example.securityservice.dto.PymeDTO;
 import com.example.securityservice.dto.UserDTO;
 import com.example.securityservice.model.AuthRequest;
 import com.example.securityservice.model.AuthResponse;
@@ -40,7 +41,7 @@ public class AuthController {
         if (user != null && passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
             String token = jwtService.generateToken(user.getId(), user.getUsername(), user.getRoleNames());
 
-            UserDTO userDTO = userService.convertToDto(user);
+            UserDTO userDTO = userService.convertToUserDto(user);
 
             AuthResponseUser authResponse = new AuthResponseUser(token, userDTO, false);
             return ResponseEntity.ok(authResponse);
@@ -55,8 +56,8 @@ public class AuthController {
     }
 
     @PostMapping("/register/pyme")
-    public ResponseEntity<Object> registerPyme(@RequestBody UserDTO userDTO) {
-        return registerUser(userDTO, "PYME");
+    public ResponseEntity<Object> registerPyme(@RequestBody PymeDTO pymeDTO) {
+        return registerPymeUser(pymeDTO);
     }
 
     private ResponseEntity<Object> registerUser(UserDTO userDTO, String role) {
@@ -68,9 +69,23 @@ public class AuthController {
         userDTO.setEnabled(true);
         userDTO.setRoles(Collections.singletonList(role)); // Add role to DTO
 
-        userService.save(userDTO);
+        userService.saveUser(userDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Collections.singletonMap("message", "User created successfully with role: " + role));
+    }
+
+    private ResponseEntity<Object> registerPymeUser(PymeDTO pymeDTO) {
+        if (userService.existsByUsername(pymeDTO.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap("message", "Username is already taken"));
+        }
+
+        pymeDTO.setPassword(passwordEncoder.encode(pymeDTO.getPassword()));
+        pymeDTO.setEnabled(true);
+        pymeDTO.setRoles(Collections.singletonList("PYME")); // Add role to DTO
+
+        userService.savePyme(pymeDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Collections.singletonMap("message", "Pyme created successfully with role: PYME"));
     }
 
     @GetMapping("/validateToken")

@@ -9,12 +9,13 @@ import java.util.Date;
 public class ServiceRequest {
 
     @Id
-    private String id; // Changed from Long to String to match MongoDB's ObjectId format
-    private Long serviceId;
+    private String id; // MongoDB ObjectId as a string
+    private String serviceName; 
+    private Long serviceId; // Reference to the ServiceModel ID stored in MySQL
     private Long clientId;
     private Date requestDate;
     private String status;
-    private String details; // Added details field
+    private String details;
 
     // Default constructor
     public ServiceRequest() {
@@ -60,6 +61,14 @@ public class ServiceRequest {
 
     public void setRequestDate(Date requestDate) {
         this.requestDate = requestDate;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public String getStatus() {

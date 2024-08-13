@@ -29,6 +29,27 @@ export interface Service {
   description: string;
   price: number;
   userId: number;
+  pyme: Pyme;
+}
+
+export interface ServiceRequest {
+  id?: number;
+  serviceId: number;
+  serviceName: string;
+  clientId: number;
+  status: string;
+  details: string;
+  requestDate: Date; 
+}
+
+export interface RequestFinished extends ServiceRequest {
+  rating: number;
+  comment: string;
+  ratingDate: Date;
+}
+
+export interface RequestGroup {
+  [key: string]: ServiceRequest[];
 }
 
 export interface MenuItem {
@@ -36,9 +57,9 @@ export interface MenuItem {
   text: string;
 }
 
-export type PymeMenu = Record<string, MenuItem>;
+export type Menu = Record<string, MenuItem>;
 
-export const pymeMenu: PymeMenu = {
+export const menuRecord: Menu = {
   'services': {
     icon: 'engineering',
     text: 'Services'
@@ -50,5 +71,25 @@ export const pymeMenu: PymeMenu = {
   'history': {
     icon: 'history',
     text: 'History'
+  },
+  'pending': {
+    icon: 'pending',
+    text: 'Pending'
+  },
+  'on-process': {
+    icon: 'hourglass_top',
+    text: 'On Process'
+  },
+  'complete': {
+    icon: 'hourglass_bottom',
+    text: 'Complete'
+  },
+  'finished': {
+    icon: 'check',
+    text: 'Finished'
+  },
+  'canceled': {
+    icon: 'canceled',
+    text: 'Canceled'
   }
 };

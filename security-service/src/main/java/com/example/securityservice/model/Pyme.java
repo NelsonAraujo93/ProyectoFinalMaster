@@ -1,6 +1,7 @@
 package com.example.securityservice.model;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "pyme")
@@ -24,6 +25,9 @@ public class Pyme {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+
+    @OneToMany(mappedBy = "pyme", cascade = CascadeType.ALL, orphanRemoval = true) // Update to reference pyme
+    private List<ServiceModel> services;
 
     // Getters and setters
     public Long getId() {
@@ -72,5 +76,13 @@ public class Pyme {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<ServiceModel> getServices() {
+        return services;
+    }
+
+    public void setServices(List<ServiceModel> services) {
+        this.services = services;
     }
 }

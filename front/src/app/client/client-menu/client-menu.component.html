@@ -1,0 +1,57 @@
+<div class="switch-item" [ngSwitch]="selectedMenuItem">
+    <div *ngSwitchCase="'Pending'">
+        <p>Solicitudes pendientes</p>
+        <div class="requests-list" *ngIf="requests?.Pending?.length > 0; else noRequests">
+            <div *ngFor="let request of requests.Pending">
+                <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="'On Process'">
+        <p>Estamos procesando tu solicitud</p>
+        <div class="requests-list" *ngIf="requests?.['On Process']?.length > 0; else noRequests">
+            <div *ngFor="let request of requests['On Process']">
+                <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="'Complete'">
+        <p>¡Tu solicitud ha sido completada!</p>
+        <div class="requests-list" *ngIf="requests?.['Complete']?.length > 0; else noRequests">
+          <div *ngFor="let request of requests['Complete']">
+            <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+            <input type="number" [(ngModel)]="ratingValue" placeholder="Rate the service">
+            <input type="text" [(ngModel)]="commentValue" placeholder="Leave a comment">
+            <button (click)="finalizeRequest(request.id, ratingValue, commentValue)">Finalize Request</button>            
+          </div>
+        </div>
+      </div>
+    <div *ngSwitchCase="'Finished'">
+        <p>¡Tu solicitud ha sido finalizada!</p>
+        <div class="requests-list" *ngIf="requests?.Finished?.length > 0; else noRequests">
+            <div *ngFor="let request of requests.Finished">
+                <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="'Canceled'">
+        <p>¡Tu solicitud ha sido cancelada!</p>
+        <div class="requests-list" *ngIf="requests?.Canceled?.length > 0; else noRequests">
+            <div *ngFor="let request of requests.Canceled">
+                <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+            </div>
+        </div>
+    </div>
+
+    <div *ngSwitchDefault>Select a menu item</div>
+</div>
+
+<ng-template #noRequests>
+    <h2>No requests in this status.</h2>
+</ng-template>
+
+<div *ngIf="selectedRequest" class="request-details-modal">
+    <app-request-details [request]="selectedRequest" (closeRequested)="closeRequestDetails()">
+        <!-- Updated to closeRequested -->
+    </app-request-details>
+</div>

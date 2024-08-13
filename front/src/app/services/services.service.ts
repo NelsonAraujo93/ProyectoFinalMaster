@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Service } from '../app.models';
+import { PublicServicesService } from './public-services.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,15 +12,16 @@ export class ServicesService {
   private servicesSubject = new BehaviorSubject<Service[]>([]);
   services$ = this.servicesSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private publicServices: PublicServicesService) {
     this.loadAllServices();
   }
 
-  private loadAllServices(): void {
+  loadAllServices(): void {
+    this.publicServices.loadAllData();
     this.http.get<Service[]>(this.apiUrl).subscribe(services => this.servicesSubject.next(services));
   }
 
-  getAllServices(): Observable<Service[]> {
+  getAllServices(): Observable<Service[] | null> {
     return this.services$;
   }
 

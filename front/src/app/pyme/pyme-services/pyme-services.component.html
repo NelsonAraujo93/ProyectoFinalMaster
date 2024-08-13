@@ -1,0 +1,30 @@
+<div class="services-container">
+  <div class="services-header"></div>
+  <div class="services-body create" *ngIf="create || edit; else servicesContainer">
+    <app-service-form [service]="selectedService" (save)="onSave($event)" (cancel)="onCancel()"></app-service-form>
+  </div>
+  <ng-template #servicesContainer>
+    <div class="services-body">
+      <div class="service-card" (click)="onCreate()">
+        <div class="new-service">
+          <div class="icon-container">
+            <mat-icon class="icon" aria-hidden="false" aria-label="add-icon">add</mat-icon>
+          </div>
+          <p>Create a new service</p>
+        </div>
+      </div>
+      <div *ngFor="let service of services" class="service-card">
+        <div class="service">
+          <div class="service-info">
+            <h2>{{ service.name }}</h2>
+            <p>{{ service.description }}</p>
+          </div>
+          <div class="service-actions">
+            <mat-icon class="icon" aria-hidden="false" aria-label="edit-icon" (click)="onEdit(service)">edit</mat-icon>
+            <mat-icon class="icon" aria-hidden="false" aria-label="delete-icon" (click)="onDelete(service)">delete</mat-icon>
+          </div>
+        </div>
+      </div>  
+    </div>
+  </ng-template>
+</div>

@@ -40,26 +40,7 @@ services:
         condition: service_healthy
     networks:
       - app-network
-
-  users-api:
-    image: users-api:latest
-    build:
-      context: ./users-api
-    ports:
-      - "8082:8082"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/Users
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=9797
-      - JWT_SECRET=your_secret
-      - JWT_EXPIRATION=3600000
-      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - app-network
-
+      
   services-api:
     image: services-api:latest
     build:

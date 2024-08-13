@@ -11,12 +11,6 @@ public class UserDTO {
     private boolean enabled;
     private List<String> roles;
 
-    // Pyme-specific fields
-    private String pymePostalCode;
-    private String pymePhone;
-    private String pymeName;
-    private String pymeDescription;
-
     // Getters and setters
     public Long getId() {
         return id;
@@ -72,37 +66,5 @@ public class UserDTO {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
-    }
-
-    public String getPymePostalCode() {
-        return pymePostalCode;
-    }
-
-    public void setPymePostalCode(String pymePostalCode) {
-        this.pymePostalCode = pymePostalCode;
-    }
-
-    public String getPymePhone() {
-        return pymePhone;
-    }
-
-    public void setPymePhone(String pymePhone) {
-        this.pymePhone = pymePhone;
-    }
-
-    public String getPymeName() {
-        return pymeName;
-    }
-
-    public void setPymeName(String pymeName) {
-        this.pymeName = pymeName;
-    }
-
-    public String getPymeDescription() {
-        return pymeDescription;
-    }
-
-    public void setPymeDescription(String pymeDescription) {
-        this.pymeDescription = pymeDescription;
     }
 }

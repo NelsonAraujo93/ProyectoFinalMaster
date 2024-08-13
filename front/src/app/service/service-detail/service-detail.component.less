@@ -1,0 +1,94 @@
+@import '../../../styles.less';
+
+.service {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  justify-content: center;
+  width: 400px;
+  align-items: center;
+
+  .service-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    flex: 1;
+    background-color: @primary-color;
+    border-radius: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    width: 100%;
+
+    .service-title {
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    p {
+      margin: 0;
+    }
+  }
+
+  .main-btn {
+    cursor: pointer;
+    background-color: @primary-color-dark;
+    padding: 10px;
+    border-radius: 25px;
+    color: @primary-color-light;
+    border: 1px solid @primary-color-dark;
+    font-weight: bold;
+    width: 200px;
+    font-size: 16px;
+  
+    &:hover {
+      background-color: @primary-color-light;
+      color: @primary-color-dark;
+    }
+  }
+}
+
+
+.pyme-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  background-color: @light-gray;
+  border-radius: 20px;
+  width: 320px;
+
+  a {
+    cursor: pointer;
+    text-decoration: none;
+  
+    .fake-btn {
+      background-color: @primary-color-dark;
+      padding: 10px;
+      border-radius: 25px;
+      color: @primary-color-light;
+      border: 1px solid @primary-color-dark;
+      font-weight: bold;
+      width: 200px;
+    }
+  
+    .fake-btn:hover {
+      background-color: @primary-color-light;
+      color: @primary-color-dark;
+    }
+  }
+
+  p {
+    margin: 0;
+  }
+}

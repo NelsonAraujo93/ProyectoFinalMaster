@@ -21,7 +21,9 @@ export class UserSessionService {
 
   private apiBaseUrl = 'http://localhost:8080/auth';
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient,
+              private router: Router,
+            ) {
     const storedUser = localStorage.getItem('currentUser');
     this.currentUserSubject = new BehaviorSubject<UserResponse | null>(storedUser ? JSON.parse(storedUser) : null);
     this.currentUser = this.currentUserSubject.asObservable();
@@ -96,7 +98,7 @@ export class UserSessionService {
       })
     );
   }
-  
+
   isClient(): boolean {
     return this.currentUserValue?.userType === 'client';
   }

@@ -1,5 +1,6 @@
 package com.example.securityservice.service;
 
+import com.example.securityservice.dto.PymeDTO;
 import com.example.securityservice.dto.UserDTO;
 import com.example.securityservice.model.Pyme;
 import com.example.securityservice.model.User;
@@ -9,6 +10,7 @@ import com.example.securityservice.repository.UserRepository;
 import com.example.securityservice.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
@@ -30,33 +32,42 @@ public class UserService {
         return Optional.ofNullable(userRepository.findByUsername(username));
     }
 
-    public UserDTO save(UserDTO userDTO) {
-        User user = convertToEntity(userDTO);
+    public UserDTO saveUser(UserDTO userDTO) {
+        User user = convertToUserEntity(userDTO);
         user = userRepository.save(user);
 
-        // Save roles
-        Set<UserRole> roles = user.getRoles();
-        if (roles != null) {
-            final User finalUser = user;
-            roles.forEach(role -> role.setUser(finalUser));
-            userRoleRepository.saveAll(roles);
-        }
+        saveUserRoles(user);
 
-        // Save Pyme if the role is PYME
-        if (userDTO.getRoles().contains("PYME")) {
-            Pyme pyme = pymeRepository.findByUser(user).orElse(new Pyme());
-            pyme = updatePymeEntity(pyme, userDTO, user);
-            pymeRepository.save(pyme);
-        }
+        return convertToUserDto(user);
+    }
 
-        return convertToDto(user);
+    public PymeDTO savePyme(PymeDTO pymeDTO) {
+        // Create User from PymeDTO
+        User user = convertToUserEntityFromPyme(pymeDTO);
+        user = userRepository.save(user); // Save user first to get the ID
+
+        // Save the user's roles
+        saveUserRoles(user);
+
+        // Create and save Pyme
+        Pyme pyme = new Pyme();
+        pyme.setUser(user); // Establish relationship with the user
+        pyme.setPymePostalCode(pymeDTO.getPymePostalCode());
+        pyme.setPymePhone(pymeDTO.getPymePhone());
+        pyme.setPymeName(pymeDTO.getPymeName());
+        pyme.setPymeDescription(pymeDTO.getPymeDescription());
+
+        pyme = pymeRepository.save(pyme); // Save Pyme
+
+        return convertToPymeDto(user, pyme);
     }
 
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
-    public UserDTO convertToDto(User user) {
+    // Conversion methods
+    public UserDTO convertToUserDto(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
@@ -66,33 +77,34 @@ public class UserService {
         userDTO.setEnabled(user.isEnabled());
         userDTO.setRoles(user.getRoleNames());
 
-        // Set Pyme-specific fields if the user is a Pyme
-        user.getRoles().stream()
-            .filter(role -> role.getRole().equals("PYME"))
-            .findFirst()
-            .ifPresent(role -> {
-                Pyme pyme = pymeRepository.findByUser(user).orElse(null);
-                if (pyme != null) {
-                    userDTO.setPymePostalCode(pyme.getPymePostalCode());
-                    userDTO.setPymePhone(pyme.getPymePhone());
-                    userDTO.setPymeName(pyme.getPymeName());
-                    userDTO.setPymeDescription(pyme.getPymeDescription());
-                }
-            });
-
         return userDTO;
     }
 
-    public User convertToEntity(UserDTO userDTO) {
+    public PymeDTO convertToPymeDto(User user, Pyme pyme) {
+        PymeDTO pymeDTO = new PymeDTO();
+        pymeDTO.setId(user.getId());
+        pymeDTO.setUsername(user.getUsername());
+        pymeDTO.setPassword(null); // Do not expose password
+        pymeDTO.setDni(user.getDni());
+        pymeDTO.setPostalCode(user.getPostalCode());
+        pymeDTO.setEnabled(user.isEnabled());
+        pymeDTO.setRoles(user.getRoleNames());
+
+        pymeDTO.setPymePostalCode(pyme.getPymePostalCode());
+        pymeDTO.setPymePhone(pyme.getPymePhone());
+        pymeDTO.setPymeName(pyme.getPymeName());
+        pymeDTO.setPymeDescription(pyme.getPymeDescription());
+
+        return pymeDTO;
+    }
+
+    public User convertToUserEntity(UserDTO userDTO) {
         User user = new User();
         user.setId(userDTO.getId());
         user.setUsername(userDTO.getUsername());
         user.setPassword(userDTO.getPassword());
         user.setDni(userDTO.getDni());
-
-        // Parse postalCode to Integer
         user.setPostalCode(userDTO.getPostalCode());
-
         user.setEnabled(userDTO.isEnabled());
 
         Set<UserRole> roles = userDTO.getRoles().stream()
@@ -103,12 +115,28 @@ public class UserService {
         return user;
     }
 
-    public Pyme updatePymeEntity(Pyme pyme, UserDTO userDTO, User user) {
-        pyme.setUser(user);
-        pyme.setPymePostalCode(userDTO.getPymePostalCode());
-        pyme.setPymePhone(userDTO.getPymePhone());
-        pyme.setPymeName(userDTO.getPymeName());
-        pyme.setPymeDescription(userDTO.getPymeDescription());
-        return pyme;
+    public User convertToUserEntityFromPyme(PymeDTO pymeDTO) {
+        User user = new User();
+        user.setId(pymeDTO.getId());
+        user.setUsername(pymeDTO.getUsername());
+        user.setPassword(pymeDTO.getPassword());
+        user.setDni(pymeDTO.getDni());
+        user.setPostalCode(pymeDTO.getPostalCode());
+        user.setEnabled(pymeDTO.isEnabled());
+
+        Set<UserRole> roles = pymeDTO.getRoles().stream()
+                .map(role -> new UserRole(user, role))
+                .collect(Collectors.toSet());
+        user.setRoles(roles);
+
+        return user;
+    }
+
+    private void saveUserRoles(User user) {
+        Set<UserRole> roles = user.getRoles();
+        if (roles != null) {
+            roles.forEach(role -> role.setUser(user));
+            userRoleRepository.saveAll(roles);
+        }
     }
 }

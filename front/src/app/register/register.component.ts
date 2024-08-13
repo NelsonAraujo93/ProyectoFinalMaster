@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RegisterClientComponent } from '../register-client/register-client.component';
-import { RegisterPymeComponent } from '../register-pyme/register-pyme.component';
 import { BgCircleComponent } from '../layout/bg-circle/bg-circle.component';
+import { RegisterClientComponent } from './register-client/register-client.component';
+import { RegisterPymeComponent } from './register-pyme/register-pyme.component';
 
 @Component({
   selector: 'app-register',

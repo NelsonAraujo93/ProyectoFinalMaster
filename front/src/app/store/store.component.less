@@ -1,0 +1,44 @@
+@import '../../styles.less';
+
+.store-component {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .store {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+
+    .filter {
+      display: flex;
+      flex-direction: column;
+      background-color: @primary-color-dark;
+      border-radius: 20px;
+      padding: 20px;
+      box-sizing: border-box;
+      width: 360px;
+      max-height: 640px;
+    }
+
+    .result-services {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+
+      .services {
+        display: flex;
+        flex: 1;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: space-evenly;
+      }
+    }
+
+  }
+}

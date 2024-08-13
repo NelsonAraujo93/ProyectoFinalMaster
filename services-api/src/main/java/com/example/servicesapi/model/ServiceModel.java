@@ -19,19 +19,20 @@ public class ServiceModel {
     @Column(name = "price", nullable = false)
     private double price;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "pyme_id", nullable = false)
+    private Pyme pyme;
 
     // Default constructor
     public ServiceModel() {
     }
 
     // Constructor
-    public ServiceModel(String name, String description, double price, Long userId) {
+    public ServiceModel(String name, String description, double price, Pyme pyme) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.userId = userId;
+        this.pyme = pyme;
     }
 
     // Getters and setters
@@ -67,11 +68,11 @@ public class ServiceModel {
         this.price = price;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Pyme getPyme() {
+        return pyme;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setPyme(Pyme pyme) {
+        this.pyme = pyme;
     }
 }
