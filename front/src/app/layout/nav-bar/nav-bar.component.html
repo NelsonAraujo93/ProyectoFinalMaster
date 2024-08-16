@@ -1,0 +1,24 @@
+<nav class="main-nav">
+  <div class="left-content">
+    <span>Pymes App</span>
+    <a routerLink="/home" routerLinkActive="active-link">Home</a>
+    <a routerLink="/store" routerLinkActive="active-link">Servicios</a>
+    <a routerLink="/about" routerLinkActive="active-link">Nosotros</a>
+  </div>
+  <div class="right-content">
+    <ng-container *ngIf="user, else loggedOut">
+      <ng-container *ngIf="userType === 'client', else pyme">
+       <a routerLink="/client-dashboard" routerLinkActive="active-link">Profile</a>
+      </ng-container>
+      <ng-template #pyme>
+        <a routerLink="/pyme-dashboard" routerLinkActive="active-link">Profile</a>
+      </ng-template>
+      <a (click)="logout()">Logout</a>
+    </ng-container>
+    <ng-template #loggedOut>
+      <a routerLink="/login" routerLinkActive="active-link">Login</a>
+      <a routerLink="/register" routerLinkActive="active-link">Register</a>
+    </ng-template>
+    <!--<a routerLink="/profile" routerLinkActive="active-link">Profile</a>-->
+  </div>
+</nav>

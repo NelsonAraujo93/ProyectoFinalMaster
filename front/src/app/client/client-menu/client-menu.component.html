@@ -1,0 +1,61 @@
+<div class="client-menu-container">
+  <div class="switch-item" [ngSwitch]="selectedMenuItem">
+    <div class="menu-container" class="menu-container" *ngSwitchCase="'Pending'">
+      <p>Solicitudes pendientes</p>
+      <div class="requests-list" *ngIf="requests?.Pending?.length > 0; else noRequests">
+        <div class="request-item" *ngFor="let request of requests.Pending">
+          <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+        </div>
+      </div>
+    </div>
+    <div class="menu-container" *ngSwitchCase="'On Process'">
+      <p>Solicitudes en proceso</p>
+      <div class="requests-list" *ngIf="requests?.['On Process']?.length > 0; else noRequests">
+        <div class="request-item" *ngFor="let request of requests['On Process']">
+          <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+        </div>
+      </div>
+    </div>
+    <div class="menu-container" *ngSwitchCase="'Complete'">
+      <p>Solicitudes completadas</p>
+      <div class="requests-list" *ngIf="requests?.['Complete']?.length > 0; else noRequests">
+        <div class="request-item complete" *ngFor="let request of requests['Complete']">
+          <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+          
+          <!-- Bind the star rating and comment to the specific request -->
+          <app-star-rating [(rating)]="request.rating"></app-star-rating>
+          <input type="text" [(ngModel)]="request.comment" placeholder="Leave a comment">
+          <button (click)="finalizeRequest(request.id, request.rating, request.comment)">Finalize Request</button>
+        </div>
+      </div>
+    </div>
+    <div class="menu-container" *ngSwitchCase="'Finalized'">
+      <p>Solicitudes finalizadas</p>
+      <div class="requests-list" *ngIf="requests?.Finalized?.length > 0; else noRequests">
+        <div class="request-item" *ngFor="let request of requests.Finalized">
+          <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+        </div>
+      </div>
+    </div>
+    <div class="menu-container" *ngSwitchCase="'Canceled'">
+      <p>Solicitudes canceladas</p>
+      <div class="requests-list" *ngIf="requests?.Canceled?.length > 0; else noRequests">
+        <div class="request-item" *ngFor="let request of requests.Canceled">
+          <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
+        </div>
+      </div>
+    </div>
+
+    <div *ngSwitchDefault>Select a menu item</div>
+  </div>
+
+  <ng-template #noRequests>
+    <h2>No hay solicitudes en este estado.</h2>
+  </ng-template>
+
+  <div *ngIf="selectedRequest" class="request-details-modal">
+    <app-request-details [request]="selectedRequest" (closeRequested)="closeRequestDetails()">
+      <!-- Updated to closeRequested -->
+    </app-request-details>
+  </div>
+</div>

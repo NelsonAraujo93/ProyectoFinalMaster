@@ -1,0 +1,25 @@
+<div class="home-container">
+  <div class="info-content">
+    <h1>¡Bienvenido a PymesApp!</h1>
+    <p>Encuentra las mejores pymes y servicios en un solo lugar.</p>
+  </div>
+  <div *ngIf="loading; else content">
+    <div class="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+  </div>
+  <ng-template #content>
+    <h2>Pymes más recientes:</h2>
+    <ul class="pymes-contaier">
+      <li *ngFor="let pyme of latestPymes">
+        <app-pyme-card [pyme]="pyme"></app-pyme-card>
+      </li>
+    </ul>
+    <h2>Servicios más recientes:</h2>
+    <ul class="services-contaier">
+      <li *ngFor="let service of latestServices">
+        <app-service-card [service]="service"></app-service-card>
+      </li>
+    </ul>
+  </ng-template>
+</div>

@@ -1,0 +1,9 @@
+<div class="pyme-menu-container">
+  <div class="switch-item" [ngSwitch]="selectedMenuItem">
+    <app-pyme-services class="services" *ngSwitchCase="'Services'"></app-pyme-services>
+    <app-pyme-requests class="menu-option" *ngSwitchCase="'Requests'"></app-pyme-requests>
+    <app-pyme-history class="menu-option" *ngSwitchCase="'History'"></app-pyme-history>
+    <!-- Add additional cases here for other components -->
+    <div *ngSwitchDefault>Select a menu item</div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<div class="store-component">
+  <div class="banner">
+    <img src="bg-store.png" alt="Banner">
+  </div>
+  <div class="store">
+    <div class="filter">
+      <app-filter (filterApplied)="applyFilter($event)" (clearFilter)="clearFilter()"></app-filter>
+    </div>
+    <div class="result-services">
+      <div class="result-counter">
+        <h2 *ngIf="services && services.length > 0">{{ services.length }} result(s) found</h2>
+        <h2 *ngIf="services && services.length === 0">No results found</h2>
+      </div>
+      <div class="services">
+        <div class="service" *ngFor="let service of services">
+          <app-service-card [service]="service"></app-service-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

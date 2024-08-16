@@ -1,0 +1,76 @@
+@import '../../../styles.less';
+
+.pyme {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+ul.services-contaier {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  padding: 0;
+}
+
+.pyme-title {
+  background-color: @primary-color;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pyme-detail-content {
+  display: flex;
+  gap: 20px;
+  box-sizing: border-box;
+
+  .pyme-data-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    flex: 1;
+    background-color: @light-gray;
+    border-radius: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+  
+    & .pyme-data-container {
+      display: flex;
+      flex-direction: column;
+    }
+  
+    & .profile-info-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+
+  .resume {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    flex: 1;
+    background-color: @light-gray;
+    border-radius: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    justify-content: center;
+
+    & h2, p {
+      margin: 0;
+    }
+  }
+}

@@ -1,0 +1,47 @@
+@import '../../../styles.less';
+
+.services-container {
+  display: flex;
+  flex: 1;
+  overflow-y: auto;
+
+  .services-body {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+
+    .service-card {
+      height: 300px;
+      width: 300px;
+      border: 1px solid @light-gray;
+      border-radius: 20px;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      & .new-service {
+        cursor: pointer;
+      }
+    }
+
+  }
+
+  & .create {
+    justify-content: center;
+
+    app-service-form {
+      background-color: @primary-color-dark;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 400px;
+      color: @primary-color;
+    }
+  }
+}

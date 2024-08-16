@@ -1,0 +1,11 @@
+<div class="side-menu">
+  <div
+    class="menu-item"
+    *ngFor="let item of menu"
+    [class.selected]="item.text === selectedMenuItem"
+    (click)="selectMenuItem(item.text)"
+  >
+    <mat-icon aria-hidden="false">{{ item.icon }}</mat-icon>
+    <p>{{ item.text }}</p>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+@import "../../../styles.less";
+
+nav.main-nav {
+  height: 70px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: @primary-color-dark;
+  color: @primary-text-color;
+
+  & .left-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 0 20px;
+  }
+
+  & .right-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    padding: 0 20px;
+  }
+
+  & a {
+    color: @primary-text-color;
+    text-decoration: none;
+    cursor: pointer;
+
+    & :hover {
+      color: @third-text-color;
+    }
+  }
+
+  & span {
+    color: @third-text-color;
+    text-transform: uppercase;
+  }
+
+  & .active-link {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+}

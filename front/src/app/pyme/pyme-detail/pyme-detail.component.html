@@ -1,0 +1,28 @@
+<div class="pyme" *ngIf="pyme">
+  <div class="pyme-title">
+    <h1>{{pyme.pymeName}}</h1>
+    <p><strong>Description:</strong> {{ pyme.pymeDescription }}</p>
+  </div>
+  <div class="pyme-detail-content">
+    <div class="pyme-data-container">
+      <div class="profile-info-item">
+        <mat-icon class="icon" aria-hidden="false" aria-label="phone-icon" fontIcon="phone"></mat-icon>
+        <p>{{pyme.pymePhone}}</p>
+      </div>
+      <div class="profile-info-item">
+        <mat-icon class="icon" aria-hidden="false" aria-label="location-icon" fontIcon="location_on"></mat-icon>
+        <p>{{pyme.pymePostalCode}}</p>
+      </div>
+    </div>
+    <div class="resume">
+      <h2>Active services</h2>
+      <p>{{pyme.services.length}}</p>
+    </div>
+  </div>
+  <h2>Servicios:</h2>
+  <ul class="services-contaier">
+    <li *ngFor="let service of pyme.services">
+      <app-service-card [service]="service"></app-service-card>
+    </li>
+  </ul>
+</div>

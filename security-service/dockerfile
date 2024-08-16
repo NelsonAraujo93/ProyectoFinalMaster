@@ -1,0 +1,11 @@
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:17-jdk-alpine
+
+# Install curl
+RUN apk --no-cache add curl jq
+
+# Copy the application JAR file
+COPY target/security-service-1.0-SNAPSHOT.jar security-service.jar
+
+# Run the application
+ENTRYPOINT ["java","-jar","/security-service.jar"]

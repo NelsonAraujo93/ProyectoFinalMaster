@@ -1,0 +1,46 @@
+@import '../../styles.less';
+
+.register-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+
+  & h1 {
+    color: @primary-text-color;
+  }
+
+  & p {
+    color: @secondary-text-color;
+  }
+}
+
+.card {
+  display: inline-block;
+  padding: 1rem 2rem;
+  margin: 1rem;
+  border: 1px solid #ccc;
+  background-color: @primary-color-light;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  font-size: 1.2rem;
+
+  & button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 25px;
+    background-color: @primary-color-light;
+    color: @primary-color-dark;
+    border: 2px solid @primary-color-dark;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  & button:hover {
+    background-color: @primary-color-dark;
+    color: @primary-text-color;
+  }
+}

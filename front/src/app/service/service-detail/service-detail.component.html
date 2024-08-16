@@ -1,0 +1,36 @@
+<div class="service" *ngIf="service">
+  <div class="service-info">
+    <div class="service-title">
+      <h1>{{ service.service.name }}</h1>
+      <p><strong>Description:</strong> {{ service.service.description }}</p>
+      <p><strong>Price:</strong> {{ service.service.price | currency }}</p>
+      <p><strong>Rating:</strong> {{ service.service.averageRating }}</p>
+      <p><strong>Requests:</strong> {{ service.service.ratingCount }}</p>
+      <button class="main-btn" (click)="requestService()">Request</button>
+    </div>
+  </div>
+  <div class="reactions-content" *ngIf="service?.requests.length > 0">
+    <div class="requests-container">
+      <h2>Últimas reacciones:</h2>
+      <div class="request-list">
+        <div class="request-item" *ngFor="let request of service.requests">
+          <app-request-details [request]="request" [button]="false"></app-request-details>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h2>Detalles pyme:</h2>
+  <div class="pyme-info">
+    <h3>Pyme Information</h3>
+    <p><strong>Name:</strong> {{ service.service.pymeName }}</p>
+    <p><strong>Description:</strong> {{ service.service.pymeDescription }}</p>
+    <p><strong>Postal:</strong> {{ service.service.pymePostalCode }}</p>
+    <p><strong>Phone:</strong> {{ service.service.pymePhone }}</p>
+    <a [routerLink]="['/pymes', service.service.pymeId]">
+      <div class="fake-btn">
+        View Pyme
+      </div>
+    </a>
+  </div>
+</div>
+

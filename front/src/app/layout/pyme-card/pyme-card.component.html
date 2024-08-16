@@ -1,0 +1,14 @@
+<div class="pyme-card">
+  <div class="icon-container">
+    <mat-icon class="person-icon" aria-hidden="false" aria-label="person-icon" fontIcon="person"></mat-icon>
+  </div>
+  <div class="data-container">
+    <h3>{{ pyme.pymeName }}</h3>
+    <p>{{ pyme.pymeDescription }}</p>
+    <a [routerLink]="['/pymes', pyme.id]">
+      <div class="fake-btn">
+        View Details
+      </div>
+    </a>
+  </div>
+</div>

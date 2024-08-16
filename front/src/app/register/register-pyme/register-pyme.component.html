@@ -1,0 +1,46 @@
+<div class="register-container">
+  <button class="go-back" (click)="goBack()">Go Back</button>
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input id="username" type="text" formControlName="username" />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input id="password" type="password" formControlName="password" />
+    </div>
+
+    <div class="form-group">
+      <label for="dni">DNI:</label>
+      <input id="dni" type="text" formControlName="dni" />
+    </div>
+
+    <div class="form-group">
+      <label for="postalCode">Postal Code:</label>
+      <input id="postalCode" type="text" formControlName="postalCode" />
+    </div>
+
+    <div class="form-group">
+      <label for="pymePostalCode">Pyme Postal Code:</label>
+      <input id="pymePostalCode" type="text" formControlName="pymePostalCode" />
+    </div>
+
+    <div class="form-group">
+      <label for="pymePhone">Pyme Phone:</label>
+      <input id="pymePhone" type="text" formControlName="pymePhone" />
+    </div>
+
+    <div class="form-group">
+      <label for="pymeName">Pyme Name:</label>
+      <input id="pymeName" type="text" formControlName="pymeName" />
+    </div>
+
+    <div class="form-group">
+      <label for="pymeDescription">Pyme Description:</label>
+      <input id="pymeDescription" type="text" formControlName="pymeDescription" />
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid">Register</button>
+  </form>
+</div>

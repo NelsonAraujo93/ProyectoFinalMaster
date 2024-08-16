@@ -1,0 +1,35 @@
+# Stage 1: Build the Angular application
+FROM node:alpine as build
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy the package.json and package-lock.json files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Install Angular CLI globally
+RUN npm install -g @angular/cli@latest
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the Angular application with the correct configuration
+RUN ng build --configuration production
+
+# Stage 2: Serve the application with Nginx
+FROM nginx:alpine
+
+# Copy the Nginx configuration file
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy the built application from the previous stage
+COPY --from=build /usr/src/app/dist/front /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

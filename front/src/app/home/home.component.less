@@ -1,0 +1,56 @@
+@import '../../styles.less';
+
+ul.services-contaier {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  padding: 0;
+}
+
+ul.pymes-contaier {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  padding: 0;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  position: relative;
+  width: 100vw;
+  height: 50vw;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vw;
+    background-color: #101820;
+    border-radius: 50%;
+    z-index: -1;
+    transform: translate(0, -50%);
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: @primary-color;
+  }
+
+  p {
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: @primary-color-light;
+  }
+}

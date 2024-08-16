@@ -1,0 +1,109 @@
+services:
+  eureka-server:
+    image: eureka-server:latest
+    build:
+      context: ./eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - app-network
+
+  api-gateway:
+    image: api-gateway:latest
+    build:
+      context: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+      - API_SECURITY_URL=http://security-service:8081
+      - API_USERS_URL=http://users-api:8082
+      - API_SERVICES_URL=http://services-api:8083
+    networks:
+      - app-network
+
+  security-service:
+    image: security-service:latest
+    build:
+      context: ./security-service
+    ports:
+      - "8081:8081"
+    environment:
+      - MYSQL_DATASOURCE_URL=jdbc:mysql://mysql:3306/Users
+      - MYSQL_DATASOURCE_USERNAME=root
+      - MYSQL_DATASOURCE_PASSWORD=9797
+      - JWT_SECRET=your_secret
+      - JWT_EXPIRATION=3600000
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+    healthcheck:
+      test: >
+        curl -s http://eureka-server:8761/eureka/apps/SECURITY-SERVICE | grep -q "<status>UP</status>" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+      
+  services-api:
+    image: services-api:latest
+    build:
+      context: ./services-api
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_USERS_URL=jdbc:mysql://mysql:3306/Users
+      - SPRING_DATASOURCE_USERS_USERNAME=root
+      - SPRING_DATASOURCE_USERS_PASSWORD=9797
+      - SPRING_DATASOURCE_SERVICES_URL=jdbc:mysql://mysql:3306/Services
+      - SPRING_DATASOURCE_SERVICES_USERNAME=root
+      - SPRING_DATASOURCE_SERVICES_PASSWORD=9797
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/services_db
+      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+    depends_on:
+      security-service:
+          condition: service_healthy
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=9797
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - app-network
+
+  front:
+    image: front:latest
+    build:
+      context: ./front
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

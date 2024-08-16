@@ -1,0 +1,20 @@
+<form [formGroup]="filterForm" (ngSubmit)="onFilter()">
+  <div class="form-group">
+    <label for="name">Service name:</label>
+    <input id="name" type="text" formControlName="name" />
+  </div>
+  <div class="form-group">
+    <label for="minPrice">Min price:</label>
+    <input id="minPrice" type="number" formControlName="minPrice" />
+  </div>
+  <div class="form-group">
+    <label for="maxPrice">Max price:</label>
+    <input id="maxPrice" type="number" formControlName="maxPrice" />
+  </div>
+  <div class="form-group">
+    <label for="minRating">Min rating:</label>
+    <input id="minRating" type="number" formControlName="minRating" />
+  </div>
+  <button mat-raised-button color="primary" type="submit">Apply Filter</button>
+  <button mat-button color="warn" type="button" (click)="onClear()">Clear</button>
+</form>

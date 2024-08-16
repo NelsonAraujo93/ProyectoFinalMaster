@@ -1,0 +1,21 @@
+<div class="service-card">
+  <div class="icon-container">
+    <mat-icon class="room_service-icon" aria-hidden="false" aria-label="room_service-icon" fontIcon="room_service"></mat-icon>
+  </div>
+  <div class="data-container">
+    <h3>{{ service.name }}</h3>
+    <div class="label-data">
+      <label>Precio: </label>
+      <p>{{ service.price | currency }}</p>
+    </div>
+    <div class="label-data">
+      <label>Rating: </label>
+      <p>{{ service.averageRating }}</p>
+    </div>
+    <a [routerLink]="['/services', service.id]">
+      <div class="fake-btn">
+        View Details
+      </div>
+    </a>
+  </div>
+</div>
