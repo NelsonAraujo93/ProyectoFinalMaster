@@ -24,24 +24,23 @@ public class PymeService {
     private ServiceRepository serviceRepository;
 
     @Transactional
-    public Pyme getPymeByUserId(Long userId) {
+    public Pyme getPymeByUserId(Integer userId) {
         return pymeRepository.findByUserId(userId).orElse(null);
     }
 
     @Transactional
-    public Optional<Pyme> getPymeById(Long id) {
+    public Optional<Pyme> getPymeById(Integer id) {
         return pymeRepository.findById(id);
     }
 
-     public Optional<PymeDTO> getPymeDTOById(Long id) {
+     public Optional<PymeDTO> getPymeDTOById(Integer id) {
         Optional<Pyme> pymeOptional = pymeRepository.findById(id);
         if (pymeOptional.isPresent()) {
-            Pyme pyme = pymeOptional.get();
-            List<ServiceModel> services = serviceRepository.findAllByPyme(pyme)
+            List<ServiceModel> services = serviceRepository.findAllByPymeId(id)
                     .stream()
                     .collect(Collectors.toList());
 
-            PymeDTO pymeDTO = convertToPymeDTO(pyme);
+            PymeDTO pymeDTO = convertToPymeDTO(pymeOptional.get());
             pymeDTO.setServices(services);
             return Optional.of(pymeDTO);
         }

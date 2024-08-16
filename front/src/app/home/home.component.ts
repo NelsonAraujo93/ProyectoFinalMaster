@@ -7,11 +7,12 @@ import { RouterLink } from '@angular/router';
 import { PymeCardComponent } from '../layout/pyme-card/pyme-card.component';
 import { ServiceCardComponent } from '../layout/service-card/service-card.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { BgCircleComponent } from '../layout/bg-circle/bg-circle.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, PymeCardComponent, ServiceCardComponent, MatProgressSpinnerModule],
+  imports: [CommonModule, RouterLink, PymeCardComponent, ServiceCardComponent, MatProgressSpinnerModule, BgCircleComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.less']
 })

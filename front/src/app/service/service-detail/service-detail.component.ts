@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PublicServicesService } from '../../services/public-services.service';
-import { Service } from '../../app.models';
+import { ServiceDetailed } from '../../app.models';
 import { CommonModule } from '@angular/common';
+import { RequestDetailsComponent } from '../../requests/request-details/request-details.component';
 
 @Component({
   selector: 'app-service-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RequestDetailsComponent],
   templateUrl: './service-detail.component.html',
   styleUrls: ['./service-detail.component.less']
 })
 export class ServiceDetailComponent implements OnInit {
-  service: Service | null = null;
+  service: ServiceDetailed | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,8 +28,8 @@ export class ServiceDetailComponent implements OnInit {
   }
 
   requestService(): void {
-    if (this.service?.id !== undefined) {
-      this.publicServicesService.requestService(this.service.id, '').subscribe(
+    if (this.service?.service.id !== undefined) {
+      this.publicServicesService.requestService(this.service.service.id, '').subscribe(
         (request) => {
           // Handle successful service request here
           console.log('Service request created:', request);

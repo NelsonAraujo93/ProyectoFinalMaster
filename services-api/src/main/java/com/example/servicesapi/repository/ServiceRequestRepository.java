@@ -11,15 +11,18 @@ import java.util.Optional;
 public interface ServiceRequestRepository extends MongoRepository<ServiceRequest, String> {
     
     // Find all service requests by a specific client ID
-    List<ServiceRequest> findByClientId(Long clientId);
+    List<ServiceRequest> findByClientId(Integer clientId);
     
     // Find a service request by its ID and the client ID
-    Optional<ServiceRequest> findByIdAndClientId(String id, Long clientId);
+    Optional<ServiceRequest> findByIdAndClientId(String id, Integer clientId);
     
     // Find a service request by service ID and client ID
-    Optional<ServiceRequest> findByServiceIdAndClientId(Long serviceId, Long clientId);
+    Optional<ServiceRequest> findByServiceIdAndClientId(Integer serviceId, Integer clientId);
     
     // Delete a service request by its ID and the client ID
-    void deleteByIdAndClientId(String id, Long clientId);
-    List<ServiceRequest> findAllByServiceIdIn(List<Long> serviceIds);
+    void deleteByIdAndClientId(String id, Integer clientId);
+    List<ServiceRequest> findAllByServiceIdIn(List<Integer> serviceIds);
+    Optional<ServiceRequest> findByServiceId(Integer serviceId);
+
+    List<ServiceRequest> findTop3ByServiceIdAndStatusOrderByRatingDateDesc(Integer serviceId, String status);
 }

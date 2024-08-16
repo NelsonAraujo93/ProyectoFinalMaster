@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Pyme, Service, ServiceRequest } from '../app.models';  // Import the Request interface
+import { Pyme, Service, ServiceDetailed, ServiceRequest } from '../app.models';  // Import the Request interface
 import { UserSessionService } from './user-session.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -63,8 +63,8 @@ export class PublicServicesService {
     return this.http.get<Pyme>(`${this.apiUrl}/pymes/${id}`);
   }
 
-  getServiceById(id: number): Observable<Service> {
-    return this.http.get<Service>(`${this.apiUrl}/services/${id}`);
+  getServiceById(id: number): Observable<ServiceDetailed> {
+    return this.http.get<ServiceDetailed>(`${this.apiUrl}/services/${id}`);
   }
 
   requestService(serviceId: number, details: string): Observable<ServiceRequest> {

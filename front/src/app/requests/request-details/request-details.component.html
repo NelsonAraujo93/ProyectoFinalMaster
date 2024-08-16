@@ -1,17 +1,19 @@
 <div class="request-details">
-    <button (click)="close()">Close</button>
+    <button *ngIf="button" (click)="close()">X</button>
   
     <h2>{{ request.serviceName }}</h2>
     <p><strong>Status:</strong> {{ request.status }}</p>
+    <p><strong>Details:</strong> {{ request.details }}</p>
+    <p><strong>Requested On:</strong> {{ request.requestDate | date }}</p>
   
-    <ng-container *ngIf="isRequestFinished(request)">
+    <ng-container *ngIf="request.rating">
       <p><strong>Rating:</strong> {{ request.rating }}</p>
       <p><strong>Comment:</strong> {{ request.comment }}</p>
       <p><strong>Rated On:</strong> {{ request.ratingDate | date }}</p>
     </ng-container>
   
-    <ng-container *ngIf="!isRequestFinished(request)">
-      <p>This request has not been rated yet.</p>
+    <ng-container *ngIf="!request.rating">
+      <p><strong>Rate:</strong> This request has not been rated yet.</p>
     </ng-container>
   </div>
   

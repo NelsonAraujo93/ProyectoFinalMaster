@@ -30,6 +30,18 @@ export interface Service {
   price: number;
   userId: number;
   pyme: Pyme;
+  averageRating?: number;
+  ratingCount?: number;
+  pymeId?: number;
+  pymeName?: string;
+  pymeDescription?: string;
+  pymePostalCode?: string;
+  pymePhone?: string;
+}
+
+export interface ServiceDetailed {
+  service: Service;
+  requests: ServiceRequest[];
 }
 
 export interface ServiceRequest {
@@ -39,13 +51,10 @@ export interface ServiceRequest {
   clientId: number;
   status: string;
   details: string;
-  requestDate: Date; 
-}
-
-export interface RequestFinished extends ServiceRequest {
-  rating: number;
-  comment: string;
-  ratingDate: Date;
+  requestDate: Date;
+  rating?: number;
+  comment?: string;
+  ratingDate?: Date;
 }
 
 export interface RequestGroup {
@@ -84,9 +93,9 @@ export const menuRecord: Menu = {
     icon: 'hourglass_bottom',
     text: 'Complete'
   },
-  'finished': {
+  'finalized': {
     icon: 'check',
-    text: 'Finished'
+    text: 'Finalized'
   },
   'canceled': {
     icon: 'canceled',

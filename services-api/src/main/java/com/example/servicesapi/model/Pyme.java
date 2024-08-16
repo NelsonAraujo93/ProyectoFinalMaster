@@ -1,8 +1,5 @@
 package com.example.servicesapi.model;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 
@@ -11,7 +8,7 @@ import jakarta.persistence.*;
 public class Pyme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;  // Change from Long to Integer
 
     @Column(name = "pyme_postal_code", nullable = false)
     private String pymePostalCode;
@@ -29,16 +26,12 @@ public class Pyme {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "pyme", cascade = CascadeType.ALL, orphanRemoval = true) // Update to reference pyme
-    private List<ServiceModel> services;
-
     // Getters and setters
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -80,13 +73,5 @@ public class Pyme {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public List<ServiceModel> getServices() {
-        return services;
-    }
-
-    public void setServices(List<ServiceModel> services) {
-        this.services = services;
     }
 }

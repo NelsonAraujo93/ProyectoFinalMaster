@@ -23,7 +23,7 @@ export class PymeRequestsComponent implements OnInit, OnDestroy {
     { label: 'Pending', value: 'Pending' },
     { label: 'On Process', value: 'On Process' },
     { label: 'Complete', value: 'Complete' },
-    { label: 'Finished', value: 'Finished' },
+    { label: 'Finalized', value: 'Finalized' },
     { label: 'Canceled', value: 'Canceled' }
   ];
 

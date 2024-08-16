@@ -1,15 +1,15 @@
 package com.example.servicesapi.dto;
 
 public class FinalizeRequestDTO {
-    private Double rating;
+    private Integer rating;
     private String comment;
 
     // Getters and Setters
-    public Double getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(Double rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 

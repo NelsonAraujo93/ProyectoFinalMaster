@@ -1,12 +1,10 @@
 package com.example.servicesapi.service;
 
 import com.example.servicesapi.model.ServiceModel;
-import com.example.servicesapi.model.ServiceRating;
 import com.example.servicesapi.dto.ServiceRequestDTO;
 import com.example.servicesapi.model.Pyme;
 import com.example.servicesapi.repository.ServiceRepository;
 import com.example.servicesapi.repository.PymeRepository;
-import com.example.servicesapi.repository.ServiceRatingRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,41 +23,37 @@ public class ServiceService {
     @Autowired
     private PymeRepository pymeRepository;
 
-    @Autowired
-    private ServiceRatingRepository serviceRatingRepository;
-
     @Transactional(readOnly = true)
-    public List<ServiceModel> getAllServicesByUserId(Long userId) {
+    public List<ServiceModel> getAllServicesByUserId(Integer userId) {
         Optional<Pyme> pyme = pymeRepository.findByUserId(userId);
-        return pyme.map(serviceRepository::findAllByPyme).orElse(List.of());
+        return pyme.map(p -> serviceRepository.findAllByPymeId(p.getId())).orElse(List.of());
     }
 
     @Transactional(readOnly = true)
-    public Optional<ServiceModel> getServiceByIdAndUserId(Long id, Long userId) {
+    public Optional<ServiceModel> getServiceByIdAndUserId(Integer id, Integer userId) {
         Optional<Pyme> pyme = pymeRepository.findByUserId(userId);
-        return pyme.flatMap(p -> serviceRepository.findByIdAndPyme(id, p));
+        return pyme.flatMap(p -> serviceRepository.findByIdAndPymeId(id, p.getId()));
     }
 
     @Transactional
     public ServiceModel createService(ServiceModel service) {
         return serviceRepository.save(service);
     }
-    
+
     @Transactional
-    public ServiceModel updateService(ServiceModel service, Long userId) {
+    public ServiceModel updateService(ServiceModel service, Integer userId) {
         Pyme pyme = pymeRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Pyme not found"));
-        service.setPyme(pyme);
+        service.setPymeId(pyme.getId());
         return serviceRepository.save(service);
     }
 
     @Transactional
-    public void deleteService(Long id, Long userId) {
-        Pyme pyme = pymeRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Pyme not found"));
-        serviceRepository.deleteByIdAndPyme(id, pyme);
+    public void deleteService(Integer id, Integer userId) {
+        serviceRepository.deleteByIdAndPymeId(id, userId);
     }
 
     @Transactional
-    public Optional<ServiceModel> getServiceById(Long id) {
+    public Optional<ServiceModel> getServiceById(Integer id) {
         return serviceRepository.findById(id);
     }
 
@@ -89,10 +83,7 @@ public class ServiceService {
         // Filter by rating
         if (minRating != null) {
             services = services.stream()
-                    .filter(service -> {
-                        double averageRating = calculateAverageRating(service.getId());
-                        return averageRating >= minRating;
-                    })
+                    .filter(service -> service.getAverageRating() >= minRating)
                     .collect(Collectors.toList());
         }
 
@@ -103,16 +94,24 @@ public class ServiceService {
                         service.getName(),
                         service.getDescription(),
                         service.getPrice(),
-                        calculateAverageRating(service.getId())
+                        service.getAverageRating() // Use the pre-calculated average rating
                 ))
                 .collect(Collectors.toList());
     }
 
-    private double calculateAverageRating(Long serviceId) {
-        List<ServiceRating> ratings = serviceRatingRepository.findByServiceId(serviceId);
-        return ratings.stream()
-                .mapToDouble(ServiceRating::getRating)
-                .average()
-                .orElse(0.0);
+    public ServiceModel addRatingToService(Integer serviceId, double rating) {
+        ServiceModel service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new IllegalArgumentException("Service not found"));
+    
+        service.addRating(rating);
+        return serviceRepository.save(service);
+    }
+    
+    public ServiceModel updateRatingForService(Integer serviceId, double oldRating, double newRating) {
+        ServiceModel service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new IllegalArgumentException("Service not found"));
+    
+        service.updateRating(oldRating, newRating);
+        return serviceRepository.save(service);
     }
 }

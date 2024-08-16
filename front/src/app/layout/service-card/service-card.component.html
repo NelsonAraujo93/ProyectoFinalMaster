@@ -8,6 +8,10 @@
       <label>Precio: </label>
       <p>{{ service.price | currency }}</p>
     </div>
+    <div class="label-data">
+      <label>Rating: </label>
+      <p>{{ service.averageRating }}</p>
+    </div>
     <a [routerLink]="['/services', service.id]">
       <div class="fake-btn">
         View Details

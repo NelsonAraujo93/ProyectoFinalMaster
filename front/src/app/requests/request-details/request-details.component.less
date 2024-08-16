@@ -1,0 +1,27 @@
+@import '../../../styles.less';
+
+.request-details {
+  display: flex;
+  flex-direction: column;
+  background: @primary-color-dark;
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  color: @primary-color-light;
+
+  button {
+    align-self: flex-end;
+    cursor: pointer;
+    background: @primary-color;
+    width: 30px;
+    height: 30px;
+    border: unset;
+    border-radius: 50%;
+    transition: all 0.3s;
+    color: #000;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}

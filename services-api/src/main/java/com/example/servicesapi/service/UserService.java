@@ -33,4 +33,8 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    public List<User> getAllClients() {
+        return userRepository.findByRolesContaining("CLIENT");
+    }
 }

@@ -1,0 +1,22 @@
+@import '../../../styles.less';
+
+.star-rating {
+  .mat-icon {
+    cursor: pointer;
+    font-size: 24px;
+  }
+
+  .active-star {
+    color: @primary-color; /* Gold color for active stars */
+  }
+
+  .inactive-star {
+    color: @primary-color-darker;
+
+    &:hover,
+    &.hovered-star {
+      color: @primary-color;
+    }
+  }
+}
+

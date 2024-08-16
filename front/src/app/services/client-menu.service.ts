@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ClientMenuService {
-  menu = ['pending', 'on-process','complete','finished', 'canceled'];
+  menu = ['pending', 'on-process','complete','finalized', 'canceled'];
   private selectedMenuItemSubject = new BehaviorSubject<string>('Pending'); // Initialize with 'profile'
   selectedMenuItem$: Observable<string> = this.selectedMenuItemSubject.asObservable();
   

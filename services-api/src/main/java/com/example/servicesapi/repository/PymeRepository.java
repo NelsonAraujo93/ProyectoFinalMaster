@@ -10,13 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PymeRepository extends JpaRepository<Pyme, Long> {
-    
-    // Method to find a Pyme by its associated user's ID
-    Optional<Pyme> findByUserId(Long userId);
+public interface PymeRepository extends JpaRepository<Pyme, Integer> {
+    Optional<Pyme> findByUserId(Integer userId);
     Optional<Pyme> findByUser(User user);
     List<Pyme> findTop6ByOrderByIdDesc();
 
     // Method to delete a Pyme by its ID (with cascading delete for associated services)
-    void deleteById(@SuppressWarnings("null") Long id);
+    void deleteById(@SuppressWarnings("null") Integer id);
 }

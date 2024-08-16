@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PymeMenuService {
-  menu = ['services', 'requests', 'history'];
+  menu = ['services', 'requests'];
   private selectedMenuItemSubject = new BehaviorSubject<string>('Services'); // Initialize with 'profile'
   selectedMenuItem$: Observable<string> = this.selectedMenuItemSubject.asObservable();
   

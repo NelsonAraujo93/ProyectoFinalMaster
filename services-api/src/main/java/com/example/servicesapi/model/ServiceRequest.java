@@ -11,18 +11,23 @@ public class ServiceRequest {
     @Id
     private String id; // MongoDB ObjectId as a string
     private String serviceName; 
-    private Long serviceId; // Reference to the ServiceModel ID stored in MySQL
-    private Long clientId;
+    private Integer serviceId; // Reference to the ServiceModel ID stored in MySQL
+    private Integer clientId;
     private Date requestDate;
     private String status;
     private String details;
+    // New fields for finalization
+    private Double rating;
+    private String comment;
+    private Date ratingDate;
 
     // Default constructor
     public ServiceRequest() {
     }
 
     // Constructor
-    public ServiceRequest(Long serviceId, Long clientId, Date requestDate, String status, String details) {
+    public ServiceRequest(String serviceName, Integer serviceId, Integer clientId, Date requestDate, String status, String details) {
+        this.serviceName = serviceName;
         this.serviceId = serviceId;
         this.clientId = clientId;
         this.requestDate = requestDate;
@@ -39,19 +44,19 @@ public class ServiceRequest {
         this.id = id;
     }
 
-    public Long getServiceId() {
+    public Integer getServiceId() {
         return serviceId;
     }
 
-    public void setServiceId(Long serviceId) {
+    public void setServiceId(Integer serviceId) {
         this.serviceId = serviceId;
     }
 
-    public Long getClientId() {
+    public Integer getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(Integer clientId) {
         this.clientId = clientId;
     }
 
@@ -85,5 +90,29 @@ public class ServiceRequest {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Date getRatingDate() {
+        return ratingDate;
+    }
+
+    public void setRatingDate(Date ratingDate) {
+        this.ratingDate = ratingDate;
     }
 }

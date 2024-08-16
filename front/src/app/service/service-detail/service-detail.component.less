@@ -2,12 +2,12 @@
 
 .service {
   display: flex;
+  flex:1;
   flex-direction: column;
   gap: 20px;
   padding: 20px;
   box-sizing: border-box;
   justify-content: center;
-  width: 400px;
   align-items: center;
 
   .service-info {
@@ -53,6 +53,37 @@
       color: @primary-color-dark;
     }
   }
+
+  .reactions-content {
+    display: flex;
+    gap: 20px;
+    flex:1;
+    width: 100%;
+    justify-content: center;
+
+    .requests-container {
+      display: flex;
+      flex:1;
+      flex-direction: column;
+
+      .request-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+
+        .request-item {
+          display: flex;
+          flex:1;
+          max-width: 300px;
+          justify-content: center;
+          background-color: @primary-color-dark;
+          border-radius: 20px;
+        }
+      }
+    }
+  }
+   
 }
 
 

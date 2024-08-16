@@ -27,7 +27,7 @@ public class ProfileController {
     private ServiceService serviceService;
 
     @GetMapping
-    public ResponseEntity<PymeProfileDTO> getProfile(@RequestHeader("x-auth-user-id") Long userId) {
+    public ResponseEntity<PymeProfileDTO> getProfile(@RequestHeader("x-auth-user-id") Integer userId) {
         Optional<Pyme> pymeOptional = pymeRepository.findByUserId(userId);
         if (!pymeOptional.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -49,7 +49,7 @@ public class ProfileController {
                     serviceDTO.setName(service.getName());
                     serviceDTO.setDescription(service.getDescription());
                     serviceDTO.setPrice(service.getPrice());
-                    serviceDTO.setPymeId(service.getPyme().getId());
+                    serviceDTO.setPymeId(service.getPymeId());
                     return serviceDTO;
                 })
                 .collect(Collectors.toList());

@@ -35,6 +35,13 @@ services:
       - JWT_SECRET=your_secret
       - JWT_EXPIRATION=3600000
       - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+    healthcheck:
+      test: >
+        curl -s http://eureka-server:8761/eureka/apps/SECURITY-SERVICE | grep -q "<status>UP</status>" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
       mysql:
         condition: service_healthy
@@ -57,8 +64,8 @@ services:
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/services_db
       - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
     depends_on:
-      mysql:
-        condition: service_healthy
+      security-service:
+          condition: service_healthy
     networks:
       - app-network
 

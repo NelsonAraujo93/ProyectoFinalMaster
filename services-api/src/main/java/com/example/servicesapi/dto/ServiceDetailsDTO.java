@@ -1,20 +1,19 @@
 package com.example.servicesapi.dto;
 
-import com.example.servicesapi.model.ServiceModel;
 import com.example.servicesapi.model.ServiceRequest;
 
 import java.util.List;
 
 public class ServiceDetailsDTO {
-    private ServiceModel service;
+    private ServiceDTO service;
     private List<ServiceRequest> requests;
 
     // Getters and setters
-    public ServiceModel getService() {
+    public ServiceDTO getService() {
         return service;
     }
 
-    public void setService(ServiceModel service) {
+    public void setService(ServiceDTO service) {
         this.service = service;
     }
 

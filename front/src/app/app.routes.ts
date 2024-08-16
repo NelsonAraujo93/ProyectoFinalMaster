@@ -21,7 +21,6 @@ export const routes: Routes = [
   { path: 'client-dashboard', component: ClientDashboardComponent, canActivate: [ClientGuard] },
   { path: 'pyme-dashboard', component: PymeDashboardComponent, canActivate: [PymeGuard] },
   { path: 'about', component: AboutUsComponent },
-  { path: 'contact', component: ContactComponent },
   { path: 'store', component: StoreComponent },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', redirectTo: '' }

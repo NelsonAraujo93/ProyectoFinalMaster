@@ -5,7 +5,7 @@ import java.util.List;
 import com.example.servicesapi.model.ServiceModel;
 
 public class PymeDTO {
-    private Long id;
+    private Integer id;
     private String pymePostalCode;
     private String pymePhone;
     private String pymeName;
@@ -13,11 +13,11 @@ public class PymeDTO {
     private List<ServiceModel> services;
 
     // Getters and setters
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

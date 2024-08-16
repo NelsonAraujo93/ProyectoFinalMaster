@@ -1,14 +1,14 @@
 package com.example.servicesapi.dto;
 
 public class ServiceRequestDTO {
-    private Long id;
+    private Integer id;
     private String name;
     private String description;
     private double price;
     private double averageRating;
 
     // Constructor with fields
-    public ServiceRequestDTO(Long id, String name, String description, double price, double averageRating) {
+    public ServiceRequestDTO(Integer id, String name, String description, double price, double averageRating) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -17,11 +17,11 @@ public class ServiceRequestDTO {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

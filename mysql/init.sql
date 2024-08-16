@@ -28,23 +28,6 @@ CREATE TABLE IF NOT EXISTS blacklisted_tokens (
     token VARCHAR(512) NOT NULL
 );
 
--- Clean up existing data
-DELETE FROM user_roles;
-DELETE FROM users;
-DELETE FROM blacklisted_tokens;
-
--- Insert initial users
-INSERT INTO users (username, password, dni, postal_code, enabled) VALUES
-('nelson', '$2a$12$ee0av8DOyESK9cVLlW7TueEX7CwpveCK6udKa9fyrTkOqxb0ckRJu', 'Z1120625R', 45960, true),  -- adminpass (hashed)
-('pipe', '$2a$12$a2hKShdRdZnJxh5UxflIsuYizILIPTuw72wAa4am/8.JZfe4XXzwe', 'Z1120725R', 45960, true),  -- estacionpass (hashed)
-('Carlos', '$2a$12$7R0ASxT5AugSyMmqTXfaGOkYa8I/dB7vTEhjNZgylgVthrAKBpDda', 'Z1170625R', 45960, true);  -- aparcamientopass (hashed)
-
--- Insert roles for initial users
-INSERT INTO user_roles (user_id, role) VALUES
-((SELECT id FROM users WHERE username = 'nelson'), 'ADMIN'),
-((SELECT id FROM users WHERE username = 'pipe'), 'CLIENT'),
-((SELECT id FROM users WHERE username = 'Carlos'), 'PYME');
-
 -- Create pyme table
 CREATE TABLE IF NOT EXISTS pyme (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,21 +39,26 @@ CREATE TABLE IF NOT EXISTS pyme (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+
 -- Ensure that user_id is unique to enforce one-to-one relationship
 CREATE UNIQUE INDEX idx_user_id ON pyme(user_id);
 
--- Create Services database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS Services;
-
--- Use the Services database
-USE Services;
-
 -- Create service table with reference to pyme table in Users database
-CREATE TABLE IF NOT EXISTS service (
+CREATE TABLE IF NOT EXISTS services (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     price DOUBLE NOT NULL,
     pyme_id INT NOT NULL,
+    total_rating DOUBLE NOT NULL DEFAULT 0,
+    rating_count INT NOT NULL DEFAULT 0,
+    average_rating DOUBLE NOT NULL DEFAULT 0,
     FOREIGN KEY (pyme_id) REFERENCES Users.pyme(id) ON DELETE CASCADE
 );
+
+-- Clean up existing data
+DELETE FROM user_roles;
+DELETE FROM users;
+DELETE FROM blacklisted_tokens;
+DELETE FROM pyme;
+DELETE FROM services;

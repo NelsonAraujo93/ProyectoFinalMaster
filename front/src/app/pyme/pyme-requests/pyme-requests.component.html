@@ -1,52 +1,53 @@
 <div class="pyme-requests">
-    <!-- Tabs for switching between request statuses -->
-    <div class="tabs">
-        <button *ngFor="let tab of tabs" (click)="selectTab(tab.value)" [class.selected]="tab.value === selectedTab">
-            {{ tab.label }}
-        </button>
-    </div>
 
     <div class="switch-item" [ngSwitch]="selectedTab">
-        <div *ngSwitchCase="'Pending'">
+        <div class="tabs">
+            <button *ngFor="let tab of tabs" (click)="selectTab(tab.value)" [class.selected]="tab.value === selectedTab">
+                {{ tab.label }}
+            </button>
+        </div>
+        <div class="menu-container" *ngSwitchCase="'Pending'">
             <p>Solicitudes pendientes</p>
             <div class="requests-list" *ngIf="requests?.['Pending']?.length > 0; else noRequests">
-                <div *ngFor="let request of requests['Pending']">
+                <div class="action-request" *ngFor="let request of requests['Pending']">
                     <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
-                    <button (click)="cancelRequest(request.id)">Cancel</button>
-                    <button (click)="updateRequestToOnProcess(request.id)">Mark as On Process</button>
+                    <div class="buttons-container">
+                        <button (click)="cancelRequest(request.id)">Cancel</button>
+                        <button (click)="updateRequestToOnProcess(request.id)">Mark as On Process</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div *ngSwitchCase="'On Process'">
-            <p>Estamos procesando tu solicitud</p>
+        <div class="menu-container" *ngSwitchCase="'On Process'">
+            <p>Solicitudes en proceso</p>
             <div class="requests-list" *ngIf="requests?.['On Process']?.length > 0; else noRequests">
-                <div *ngFor="let request of requests['On Process']">
+                <div class="action-request" *ngFor="let request of requests['On Process']">
                     <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
                     <button (click)="updateRequestToComplete(request.id)">Mark as Complete</button>
                 </div>
             </div>
         </div>
-        <div *ngSwitchCase="'Complete'">
-            <p>¡Tu solicitud ha sido completada!</p>
+        <div class="menu-container" *ngSwitchCase="'Complete'">
+            <p>Solicitudes completas</p>
             <div class="requests-list" *ngIf="requests && requests['Complete']?.length > 0; else noRequests">
-                <div *ngFor="let request of requests['Complete']">
+                <div class="action-request" *ngFor="let request of requests['Complete']">
                     <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
                 </div>
             </div>
         </div>
-        <div *ngSwitchCase="'Finished'">
-            <p>¡Tu solicitud ha sido finalizada!</p>
-            <div class="requests-list" *ngIf="requests && requests['Finished']?.length > 0; else noRequests">
-                <div *ngFor="let request of requests['Finished']">
+        <div class="menu-container" *ngSwitchCase="'Finalized'">
+            <p>Solicitudes finalizadas</p>
+            <div class="requests-list" *ngIf="requests && requests['Finalized']?.length > 0; else noRequests">
+                <div class="action-request" *ngFor="let request of requests['Finalized']">
                     <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
                 </div>
             </div>
         </div>
-        <div *ngSwitchCase="'Canceled'">
-            <p>¡Tu solicitud ha sido cancelada!</p>
+        <div class="menu-container" *ngSwitchCase="'Canceled'">
+            <p>Solicitudes canceladas</p>
             <div class="requests-list" *ngIf="requests && requests['Canceled']?.length > 0; else noRequests">
-                <div *ngFor="let request of requests['Canceled']">
+                <div class="action-request" *ngFor="let request of requests['Canceled']">
                     <app-request-card [request]="request" (click)="openRequestDetails(request)"></app-request-card>
                 </div>
             </div>
@@ -60,6 +61,6 @@
 
     <div *ngIf="selectedRequest" class="request-details-modal">
         <app-request-details [request]="selectedRequest"
-            (closeRequestDetails)="closeRequestDetails()"></app-request-details>
+            (closeRequested)="closeRequestDetails()"></app-request-details>
     </div>
 </div>
