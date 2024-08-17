@@ -1,0 +1,4 @@
+/home/nelson/Desktop/Master/ProyectoFinalMaster/api-gateway/src/main/java/com/example/apigateway/ApiGatewayApplication.java
+/home/nelson/Desktop/Master/ProyectoFinalMaster/api-gateway/src/main/java/com/example/apigateway/security/AuthFilter.java
+/home/nelson/Desktop/Master/ProyectoFinalMaster/api-gateway/src/main/java/com/example/apigateway/config/GatewayConfig.java
+/home/nelson/Desktop/Master/ProyectoFinalMaster/api-gateway/src/main/java/com/example/apigateway/filter/LoggingFilter.java

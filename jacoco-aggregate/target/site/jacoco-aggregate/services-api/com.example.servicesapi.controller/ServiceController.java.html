@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ServiceController.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">JaCoCo Report Aggregate</a> &gt; <a href="../index.html" class="el_bundle">services-api</a> &gt; <a href="index.source.html" class="el_package">com.example.servicesapi.controller</a> &gt; <span class="el_source">ServiceController.java</span></div><h1>ServiceController.java</h1><pre class="source lang-java linenums">package com.example.servicesapi.controller;
+
+import com.example.servicesapi.dto.ServiceDTO;
+import com.example.servicesapi.model.Pyme;
+import com.example.servicesapi.model.ServiceModel;
+import com.example.servicesapi.repository.PymeRepository;
+import com.example.servicesapi.service.ServiceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping(&quot;/services&quot;)
+<span class="nc" id="L20">public class ServiceController {</span>
+
+    @Autowired
+    private ServiceService serviceService;
+
+    @Autowired
+    private PymeRepository pymeRepository;
+
+    @PostMapping
+    public ResponseEntity&lt;ServiceDTO&gt; createService(
+            @RequestBody ServiceModel service,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer userId) {
+        // Check if a Pyme exists for the given userId
+<span class="nc" id="L33">        Optional&lt;Pyme&gt; pymeOptional = pymeRepository.findByUserId(userId);</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (!pymeOptional.isPresent()) {</span>
+<span class="nc" id="L35">            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 if Pyme doesn't exist</span>
+        }
+    
+        // Set the Pyme ID to the service
+<span class="nc" id="L39">        service.setPymeId(pymeOptional.get().getId());</span>
+    
+        // Create the service
+<span class="nc" id="L42">        ServiceModel createdService = serviceService.createService(service);</span>
+    
+        // Convert to DTO and return
+<span class="nc" id="L45">        ServiceDTO serviceDTO = convertToDTO(createdService);</span>
+<span class="nc" id="L46">        return ResponseEntity.ok(serviceDTO);</span>
+    }
+    
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;ServiceDTO&gt; getServiceById(
+            @PathVariable Integer id,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer userId) {
+<span class="nc" id="L54">        Optional&lt;ServiceModel&gt; service = serviceService.getServiceByIdAndUserId(id, userId);</span>
+<span class="nc" id="L55">        return service.map(this::convertToDTO)</span>
+<span class="nc" id="L56">                      .map(ResponseEntity::ok)</span>
+<span class="nc" id="L57">                      .orElseGet(() -&gt; ResponseEntity.notFound().build());</span>
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;ServiceDTO&gt;&gt; getAllServices(
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer userId) {
+        
+<span class="nc" id="L64">        Optional&lt;Pyme&gt; pyme = pymeRepository.findByUserId(userId);</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (pyme.isPresent()) {</span>
+<span class="nc" id="L66">            List&lt;ServiceModel&gt; services = serviceService.getAllServicesByUserId(userId);</span>
+<span class="nc" id="L67">            List&lt;ServiceDTO&gt; serviceDTOs = services.stream()</span>
+<span class="nc" id="L68">                                               .map(this::convertToDTO)</span>
+<span class="nc" id="L69">                                               .collect(Collectors.toList());</span>
+<span class="nc" id="L70">            return ResponseEntity.ok(serviceDTOs);</span>
+        } else {
+<span class="nc" id="L72">            return ResponseEntity.ok(Collections.emptyList());</span>
+        }
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;ServiceDTO&gt; updateService(
+            @PathVariable Integer id,
+            @RequestBody ServiceModel service,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer userId) {
+<span class="nc" id="L81">        service.setId(id);</span>
+<span class="nc" id="L82">        ServiceModel updatedService = serviceService.updateService(service, userId);</span>
+<span class="nc" id="L83">        ServiceDTO serviceDTO = convertToDTO(updatedService);</span>
+<span class="nc" id="L84">        return ResponseEntity.ok(serviceDTO);</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; deleteService(
+            @PathVariable Integer id,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer userId) {
+<span class="nc" id="L91">        serviceService.deleteService(id, userId);</span>
+<span class="nc" id="L92">        return ResponseEntity.noContent().build();</span>
+    }
+
+    private ServiceDTO convertToDTO(ServiceModel serviceModel) {
+<span class="nc" id="L96">        Pyme pyme = pymeRepository.findById(serviceModel.getPymeId()).orElseThrow(() -&gt; new RuntimeException(&quot;Pyme not found&quot;));</span>
+<span class="nc" id="L97">        ServiceDTO serviceDTO = new ServiceDTO();</span>
+<span class="nc" id="L98">        serviceDTO.setId(serviceModel.getId());</span>
+<span class="nc" id="L99">        serviceDTO.setName(serviceModel.getName());</span>
+<span class="nc" id="L100">        serviceDTO.setDescription(serviceModel.getDescription());</span>
+<span class="nc" id="L101">        serviceDTO.setPrice(serviceModel.getPrice());</span>
+<span class="nc" id="L102">        serviceDTO.setAverageRating(serviceModel.getAverageRating());</span>
+<span class="nc" id="L103">        serviceDTO.setRatingCount(serviceModel.getRatingCount());</span>
+<span class="nc" id="L104">        serviceDTO.setPymeId(pyme.getId());</span>
+<span class="nc" id="L105">        serviceDTO.setPymeName(pyme.getPymeName());</span>
+<span class="nc" id="L106">        serviceDTO.setPymeDescription(pyme.getPymeDescription());</span>
+<span class="nc" id="L107">        serviceDTO.setPymePhone(pyme.getPymePhone());</span>
+<span class="nc" id="L108">        serviceDTO.setPymePostalCode(pyme.getPymePostalCode());</span>
+
+<span class="nc" id="L110">        return serviceDTO;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

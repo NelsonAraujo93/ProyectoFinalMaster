@@ -9,16 +9,18 @@
       <button class="main-btn" (click)="requestService()">Request</button>
     </div>
   </div>
-  <div class="reactions-content" *ngIf="service?.requests.length > 0">
-    <div class="requests-container">
-      <h2>Últimas reacciones:</h2>
-      <div class="request-list">
-        <div class="request-item" *ngFor="let request of service.requests">
-          <app-request-details [request]="request" [button]="false"></app-request-details>
+  <ng-container *ngIf="service?.requests?.length && service.requests.length > 0">
+    <div class="reactions-content">
+      <div class="requests-container">
+        <h2>Últimas reacciones:</h2>
+        <div class="request-list">
+          <div class="request-item" *ngFor="let request of service.requests">
+            <app-request-details [request]="request" [button]="false"></app-request-details>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </ng-container>
   <h2>Detalles pyme:</h2>
   <div class="pyme-info">
     <h3>Pyme Information</h3>
@@ -33,4 +35,3 @@
     </a>
   </div>
 </div>
-

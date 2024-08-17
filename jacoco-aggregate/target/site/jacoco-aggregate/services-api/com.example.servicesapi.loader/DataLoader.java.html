@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DataLoader.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">JaCoCo Report Aggregate</a> &gt; <a href="../index.html" class="el_bundle">services-api</a> &gt; <a href="index.source.html" class="el_package">com.example.servicesapi.loader</a> &gt; <span class="el_source">DataLoader.java</span></div><h1>DataLoader.java</h1><pre class="source lang-java linenums">package com.example.servicesapi.loader;
+
+import com.example.servicesapi.model.Pyme;
+import com.example.servicesapi.model.ServiceModel;
+import com.example.servicesapi.model.ServiceRequest;
+import com.example.servicesapi.model.User;
+import com.example.servicesapi.repository.ServiceRepository;
+import com.example.servicesapi.repository.ServiceRequestRepository;
+import com.example.servicesapi.service.UserService;
+import com.example.servicesapi.repository.PymeRepository;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.List;
+
+@Component
+<span class="nc" id="L21">public class DataLoader {</span>
+
+<span class="nc" id="L23">  private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);</span>
+
+  @Autowired
+  private PymeRepository pymeRepository;
+
+  @Autowired
+  private ServiceRepository serviceRepository;
+
+  @Autowired
+  private ServiceRequestRepository serviceRequestRepository;
+
+  @Autowired
+  private UserService userService;
+
+  @PostConstruct
+  public void loadData() {
+    // Fetch Pymes
+<span class="nc" id="L40">    List&lt;Pyme&gt; pymes = pymeRepository.findAll();</span>
+
+<span class="nc bnc" id="L42" title="All 2 branches missed.">    if (pymes.isEmpty()) {</span>
+<span class="nc" id="L43">      logger.warn(&quot;No Pymes found! Services and requests cannot be created.&quot;);</span>
+<span class="nc" id="L44">      return;</span>
+    }
+
+<span class="nc" id="L47">    logger.info(&quot;Found {} Pymes. Creating services and requests...&quot;, pymes.size());</span>
+
+    // Create services and associated requests for each Pyme
+<span class="nc bnc" id="L50" title="All 2 branches missed.">    for (int i = 0; i &lt; pymes.size(); i++) {</span>
+<span class="nc" id="L51">      Pyme pyme = pymes.get(i);</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">      for (int j = 1; j &lt;= 2; j++) { // Create 2 services for each Pyme</span>
+<span class="nc" id="L53">        ServiceModel service = new ServiceModel(</span>
+            &quot;Service &quot; + (i + 1) + &quot;.&quot; + j,
+            &quot;Description for service &quot; + (i + 1) + &quot;.&quot; + j,
+            100.0 + j * 50,
+<span class="nc" id="L57">            pyme.getId());</span>
+<span class="nc" id="L58">        serviceRepository.save(service);</span>
+<span class="nc" id="L59">        logger.info(&quot;Created Service: {} for Pyme: {}&quot;, service.getName(), pyme.getPymeName());</span>
+      }
+    }
+
+<span class="nc" id="L63">    createRequests();</span>
+<span class="nc" id="L64">  }</span>
+
+  public void createRequests() {
+    // Create service requests for each client and service combination
+<span class="nc" id="L68">    List&lt;User&gt; clients = userService.getAllClients();</span>
+
+<span class="nc bnc" id="L70" title="All 2 branches missed.">    if (clients.isEmpty()) {</span>
+<span class="nc" id="L71">      logger.warn(&quot;No clients found! Service requests cannot be created.&quot;);</span>
+<span class="nc" id="L72">      return;</span>
+    }
+
+<span class="nc" id="L75">    logger.info(&quot;Found {} clients. Creating service requests...&quot;, clients.size());</span>
+
+    // Fetch all services (assuming you want to create requests for all services)
+<span class="nc" id="L78">    List&lt;ServiceModel&gt; services = serviceRepository.findAll();</span>
+
+<span class="nc bnc" id="L80" title="All 2 branches missed.">    if (services.isEmpty()) {</span>
+<span class="nc" id="L81">      logger.warn(&quot;No services found! Service requests cannot be created.&quot;);</span>
+<span class="nc" id="L82">      return;</span>
+    }
+
+<span class="nc bnc" id="L85" title="All 2 branches missed.">    for (User client : clients) {</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">      for (ServiceModel service : services) {</span>
+<span class="nc" id="L87">        ServiceRequest serviceRequest = new ServiceRequest(</span>
+<span class="nc" id="L88">            service.getName(),</span>
+<span class="nc" id="L89">            service.getId(),</span>
+<span class="nc" id="L90">            client.getId(),</span>
+            new Date(),
+            &quot;Pending&quot;,
+<span class="nc" id="L93">            &quot;Request details for client &quot; + client.getUsername());</span>
+<span class="nc" id="L94">        serviceRequestRepository.save(serviceRequest);</span>
+<span class="nc" id="L95">        logger.info(&quot;Created ServiceRequest for client {} and service {}&quot;, client.getUsername(), service.getName());</span>
+<span class="nc" id="L96">      }</span>
+<span class="nc" id="L97">    }</span>
+<span class="nc" id="L98">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
