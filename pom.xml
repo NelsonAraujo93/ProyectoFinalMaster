@@ -23,6 +23,8 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/jacoco-aggregate/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.organization>nelsonaraujo93</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>
