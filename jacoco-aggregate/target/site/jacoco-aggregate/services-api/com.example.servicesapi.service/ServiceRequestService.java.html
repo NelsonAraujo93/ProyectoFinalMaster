@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ServiceRequestService.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">JaCoCo Report Aggregate</a> &gt; <a href="../index.html" class="el_bundle">services-api</a> &gt; <a href="index.source.html" class="el_package">com.example.servicesapi.service</a> &gt; <span class="el_source">ServiceRequestService.java</span></div><h1>ServiceRequestService.java</h1><pre class="source lang-java linenums">package com.example.servicesapi.service;
+
+import com.example.servicesapi.model.Pyme;
+import com.example.servicesapi.model.ServiceModel;
+import com.example.servicesapi.model.ServiceRequest;
+import com.example.servicesapi.repository.PymeRepository;
+import com.example.servicesapi.repository.ServiceRepository;
+import com.example.servicesapi.repository.ServiceRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+<span class="nc" id="L17">public class ServiceRequestService {</span>
+
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
+
+    @Autowired
+    private PymeRepository pymeRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    // Method to create a new service request
+    public ServiceRequest createServiceRequest(ServiceRequest serviceRequest) {
+<span class="nc" id="L30">        Optional&lt;ServiceModel&gt; serviceOptional = serviceRepository.findById(serviceRequest.getServiceId());</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (serviceOptional.isEmpty()) {</span>
+<span class="nc" id="L32">            throw new IllegalArgumentException(&quot;Service not found.&quot;);</span>
+        }
+
+<span class="nc" id="L35">        ServiceModel service = serviceOptional.get();</span>
+
+<span class="nc" id="L37">        Optional&lt;Pyme&gt; pymeOptional = pymeRepository.findByUserId(serviceRequest.getClientId());</span>
+<span class="nc bnc" id="L38" title="All 4 branches missed.">        if (pymeOptional.isPresent() &amp;&amp; pymeOptional.get().getId().equals(service.getPymeId())) {</span>
+<span class="nc" id="L39">            throw new IllegalArgumentException(&quot;Cannot create a service request for your own service.&quot;);</span>
+        }
+
+<span class="nc" id="L42">        serviceRequest.setServiceName(service.getName());</span>
+<span class="nc" id="L43">        serviceRequest.setStatus(&quot;Pending&quot;);</span>
+
+<span class="nc" id="L45">        return serviceRequestRepository.save(serviceRequest);</span>
+    }
+
+    // Method to update a service request
+    public ServiceRequest updateServiceRequest(ServiceRequest serviceRequest) {
+<span class="nc" id="L50">        return serviceRequestRepository.save(serviceRequest);</span>
+    }
+
+    // Method to delete a service request by its ID and client ID
+    public void deleteServiceRequest(String id, Integer clientId) {
+<span class="nc" id="L55">        serviceRequestRepository.deleteByIdAndClientId(id, clientId);</span>
+<span class="nc" id="L56">    }</span>
+
+    // Method to retrieve service requests by client ID
+    public List&lt;ServiceRequest&gt; getAllServiceRequestsByClientId(Integer clientId) {
+<span class="nc" id="L60">        return serviceRequestRepository.findByClientId(clientId);</span>
+    }
+
+    // Method to get a service request by its ID and client ID
+    public Optional&lt;ServiceRequest&gt; getServiceRequestByIdAndClientId(String id, Integer clientId) {
+<span class="nc" id="L65">        return serviceRequestRepository.findByIdAndClientId(id, clientId);</span>
+    }
+
+    @Transactional
+    public Optional&lt;ServiceRequest&gt; getServiceRequestById(String id) {
+<span class="nc" id="L70">        return serviceRequestRepository.findById(id);</span>
+    }
+
+    @Transactional
+    public Map&lt;String, List&lt;ServiceRequest&gt;&gt; getServiceRequestsGroupedByStatus(Integer clientId) {
+<span class="nc" id="L75">        List&lt;ServiceRequest&gt; requests = serviceRequestRepository.findByClientId(clientId);</span>
+<span class="nc" id="L76">        return requests.stream().collect(Collectors.groupingBy(ServiceRequest::getStatus));</span>
+    }
+
+    @Transactional
+    public ServiceRequest updateRequestToOnProcess(String requestId) {
+<span class="nc" id="L81">        ServiceRequest request = serviceRequestRepository.findById(requestId)</span>
+<span class="nc" id="L82">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Request not found&quot;));</span>
+
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (!&quot;Pending&quot;.equals(request.getStatus())) {</span>
+<span class="nc" id="L85">            throw new IllegalArgumentException(&quot;Request is not in Pending status&quot;);</span>
+        }
+
+<span class="nc" id="L88">        request.setStatus(&quot;On Process&quot;);</span>
+<span class="nc" id="L89">        return serviceRequestRepository.save(request);</span>
+    }
+
+    @Transactional
+    public ServiceRequest updateRequestToComplete(String requestId) {
+<span class="nc" id="L94">        ServiceRequest request = serviceRequestRepository.findById(requestId)</span>
+<span class="nc" id="L95">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Request not found&quot;));</span>
+
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (!&quot;On Process&quot;.equals(request.getStatus())) {</span>
+<span class="nc" id="L98">            throw new IllegalArgumentException(&quot;Request is not in On Process status&quot;);</span>
+        }
+
+<span class="nc" id="L101">        request.setStatus(&quot;Complete&quot;);</span>
+<span class="nc" id="L102">        return serviceRequestRepository.save(request);</span>
+    }
+
+    @Transactional
+    public ServiceRequest finalizeServiceRequest(String requestId, Integer rating, String comment) {
+        // Fetch the service request
+<span class="nc" id="L108">        ServiceRequest request = serviceRequestRepository.findById(requestId)</span>
+<span class="nc" id="L109">                .orElseThrow(() -&gt; new RuntimeException(&quot;Service Request not found&quot;));</span>
+
+        // Ensure the request is in a state that can be finalized
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (!&quot;Complete&quot;.equals(request.getStatus())) {</span>
+<span class="nc" id="L113">            throw new IllegalStateException(&quot;Service request cannot be finalized&quot;);</span>
+        }
+
+        // Update the request status, rating, and comment
+<span class="nc" id="L117">        request.setStatus(&quot;Finalized&quot;);</span>
+<span class="nc" id="L118">        request.setRating(rating.doubleValue());</span>
+<span class="nc" id="L119">        request.setComment(comment);</span>
+<span class="nc" id="L120">        request.setRatingDate(new Date());</span>
+
+        // Update the service's rating and count
+<span class="nc" id="L123">        ServiceModel service = serviceRepository.findById(request.getServiceId())</span>
+<span class="nc" id="L124">                .orElseThrow(() -&gt; new RuntimeException(&quot;Service not found&quot;));</span>
+<span class="nc" id="L125">        service.addRating(rating);  // This will also update the averageRating</span>
+
+        // Save the updated service and request
+<span class="nc" id="L128">        serviceRepository.save(service);</span>
+<span class="nc" id="L129">        return serviceRequestRepository.save(request);</span>
+    }
+
+    public ServiceRequest cancelServiceRequest(String requestId) {
+<span class="nc" id="L133">        ServiceRequest request = serviceRequestRepository.findById(requestId)</span>
+<span class="nc" id="L134">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Request not found&quot;));</span>
+
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (&quot;Finished&quot;.equals(request.getStatus())) {</span>
+<span class="nc" id="L137">            throw new IllegalArgumentException(&quot;Cannot cancel a finished request&quot;);</span>
+        }
+
+<span class="nc" id="L140">        request.setStatus(&quot;Canceled&quot;);</span>
+<span class="nc" id="L141">        return serviceRequestRepository.save(request);</span>
+    }
+
+    public Map&lt;String, List&lt;ServiceRequest&gt;&gt; getServiceRequestsGroupedByStatusForPyme(Integer pymeUserId) {
+<span class="nc" id="L145">        List&lt;ServiceModel&gt; services = serviceRepository.findAllByPymeId(pymeUserId);</span>
+<span class="nc" id="L146">        List&lt;Integer&gt; serviceIds = services.stream().map(ServiceModel::getId).collect(Collectors.toList());</span>
+<span class="nc" id="L147">        List&lt;ServiceRequest&gt; requests = serviceRequestRepository.findAllByServiceIdIn(serviceIds);</span>
+
+<span class="nc" id="L149">        return requests.stream().collect(Collectors.groupingBy(ServiceRequest::getStatus));</span>
+    }
+
+    public ServiceRequest cancelRequestByPyme(String requestId, Integer pymeUserId) {
+<span class="nc" id="L153">        ServiceRequest request = serviceRequestRepository.findById(requestId)</span>
+<span class="nc" id="L154">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Request not found&quot;));</span>
+
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (!&quot;Pending&quot;.equals(request.getStatus())) {</span>
+<span class="nc" id="L157">            throw new IllegalArgumentException(&quot;Request is not in Pending status&quot;);</span>
+        }
+
+<span class="nc" id="L160">        ServiceModel service = serviceRepository.findById(request.getServiceId())</span>
+<span class="nc" id="L161">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Service not found&quot;));</span>
+
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (!service.getPymeId().equals(pymeUserId)) {</span>
+<span class="nc" id="L164">            throw new IllegalArgumentException(&quot;Unauthorized access&quot;);</span>
+        }
+
+<span class="nc" id="L167">        request.setStatus(&quot;Canceled&quot;);</span>
+<span class="nc" id="L168">        return serviceRequestRepository.save(request);</span>
+    }
+
+    // Method to update a pending request to on-process by Pyme
+    public ServiceRequest updateRequestToOnProcessByPyme(String requestId, Integer pymeUserId) {
+<span class="nc" id="L173">        ServiceRequest request = serviceRequestRepository.findById(requestId)</span>
+<span class="nc" id="L174">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Request not found&quot;));</span>
+
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        if (!&quot;Pending&quot;.equals(request.getStatus())) {</span>
+<span class="nc" id="L177">            throw new IllegalArgumentException(&quot;Request is not in Pending status&quot;);</span>
+        }
+
+<span class="nc" id="L180">        ServiceModel service = serviceRepository.findById(request.getServiceId())</span>
+<span class="nc" id="L181">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Service not found&quot;));</span>
+
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        if (!service.getPymeId().equals(pymeUserId)) {</span>
+<span class="nc" id="L184">            throw new IllegalArgumentException(&quot;Unauthorized access&quot;);</span>
+        }
+
+<span class="nc" id="L187">        request.setStatus(&quot;On Process&quot;);</span>
+<span class="nc" id="L188">        return serviceRequestRepository.save(request);</span>
+    }
+
+    // Method to update an on-process request to complete by Pyme
+    public ServiceRequest updateRequestToCompleteByPyme(String requestId, Integer pymeUserId) {
+<span class="nc" id="L193">        ServiceRequest request = serviceRequestRepository.findById(requestId)</span>
+<span class="nc" id="L194">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Request not found&quot;));</span>
+
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        if (!&quot;On Process&quot;.equals(request.getStatus())) {</span>
+<span class="nc" id="L197">            throw new IllegalArgumentException(&quot;Request is not in On Process status&quot;);</span>
+        }
+
+<span class="nc" id="L200">        ServiceModel service = serviceRepository.findById(request.getServiceId())</span>
+<span class="nc" id="L201">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Service not found&quot;));</span>
+
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if (!service.getPymeId().equals(pymeUserId)) {</span>
+<span class="nc" id="L204">            throw new IllegalArgumentException(&quot;Unauthorized access&quot;);</span>
+        }
+
+<span class="nc" id="L207">        request.setStatus(&quot;Complete&quot;);</span>
+<span class="nc" id="L208">        return serviceRequestRepository.save(request);</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

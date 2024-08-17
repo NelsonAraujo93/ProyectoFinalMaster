@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AuthFilter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">JaCoCo Report Aggregate</a> &gt; <a href="../index.html" class="el_bundle">api-gateway</a> &gt; <a href="index.source.html" class="el_package">com.example.apigateway.security</a> &gt; <span class="el_source">AuthFilter.java</span></div><h1>AuthFilter.java</h1><pre class="source lang-java linenums">package com.example.apigateway.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+@Component
+public class AuthFilter extends AbstractGatewayFilterFactory&lt;AuthFilter.Config&gt; {
+
+<span class="nc" id="L21">    private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);</span>
+
+    private final WebClient.Builder webClientBuilder;
+
+    @Value(&quot;${api.security.url}&quot;)
+    private String seguridadUrl;
+
+    @Autowired
+    public AuthFilter(WebClient.Builder webClientBuilder) {
+<span class="nc" id="L30">        super(Config.class);</span>
+<span class="nc" id="L31">        this.webClientBuilder = webClientBuilder;</span>
+<span class="nc" id="L32">    }</span>
+
+    @Override
+    public GatewayFilter apply(Config config) {
+<span class="nc" id="L36">        return (exchange, chain) -&gt; {</span>
+
+<span class="nc" id="L38">            ServerHttpResponse response = exchange.getResponse();</span>
+<span class="nc" id="L39">            String path = exchange.getRequest().getURI().getPath();</span>
+<span class="nc" id="L40">            logger.info(&quot;Processing request for path: {}&quot;, path);</span>
+
+<span class="nc bnc" id="L42" title="All 2 branches missed.">            if (path.startsWith(&quot;/auth&quot;)) {</span>
+<span class="nc" id="L43">                return chain.filter(exchange);</span>
+            }
+<span class="nc bnc" id="L45" title="All 2 branches missed.">            if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {</span>
+<span class="nc" id="L46">                logger.warn(&quot;Bearer token is missing in header&quot;);</span>
+<span class="nc" id="L47">                response.setStatusCode(HttpStatus.UNAUTHORIZED);</span>
+<span class="nc" id="L48">                return response.writeWith(Mono.just(response.bufferFactory().wrap(&quot;Bearer token is missing in header&quot;.getBytes())));</span>
+            }
+
+            @SuppressWarnings(&quot;null&quot;)
+<span class="nc" id="L52">            String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            if (!authHeader.startsWith(&quot;Bearer &quot;)) {</span>
+<span class="nc" id="L54">                logger.warn(&quot;Bearer token is not present&quot;);</span>
+<span class="nc" id="L55">                response.setStatusCode(HttpStatus.UNAUTHORIZED);</span>
+<span class="nc" id="L56">                return response.writeWith(Mono.just(response.bufferFactory().wrap(&quot;Bearer token is not present&quot;.getBytes())));</span>
+            }
+
+<span class="nc" id="L59">            String token = authHeader.replace(&quot;Bearer &quot;, &quot;&quot;);</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">            if (token.isEmpty()) {</span>
+<span class="nc" id="L61">                logger.warn(&quot;Token is empty&quot;);</span>
+<span class="nc" id="L62">                response.setStatusCode(HttpStatus.UNAUTHORIZED);</span>
+<span class="nc" id="L63">                return response.writeWith(Mono.just(response.bufferFactory().wrap(&quot;Token is empty&quot;.getBytes())));</span>
+            }
+
+<span class="nc" id="L66">            logger.info(&quot;Token to validate: {}&quot;, token);</span>
+
+<span class="nc" id="L68">            return webClientBuilder.build()</span>
+<span class="nc" id="L69">                    .get()</span>
+<span class="nc" id="L70">                    .uri(seguridadUrl + &quot;/auth/validateToken&quot;)</span>
+<span class="nc" id="L71">                    .header(HttpHeaders.AUTHORIZATION, authHeader)</span>
+<span class="nc" id="L72">                    .retrieve()</span>
+<span class="nc" id="L73">                    .onStatus(httpStatus -&gt; {</span>
+<span class="nc" id="L74">                        logger.error(&quot;Received error status: {}&quot;, httpStatus);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                        return httpStatus.value() != HttpStatus.OK.value();</span>
+                    }, error -&gt; {
+<span class="nc" id="L77">                        logger.error(&quot;Error during token validation: {}&quot;, error);</span>
+<span class="nc" id="L78">                        return Mono.error(new Throwable(&quot;UNAUTHORIZED&quot;));</span>
+                    })
+<span class="nc" id="L80">                    .bodyToMono(AuthValidationResponse.class)</span>
+<span class="nc" id="L81">                    .flatMap(authValidationResponse -&gt; {</span>
+<span class="nc" id="L82">                        logger.info(&quot;Token validated for user: {}&quot;, authValidationResponse.getUserId());</span>
+<span class="nc" id="L83">                        logger.info(&quot;User roles: {}&quot;, authValidationResponse.getRoles());</span>
+<span class="nc" id="L84">                        logger.info(&quot;Required role: {}&quot;, config.getRoles());</span>
+
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                        if (authValidationResponse.isTokenBlacklisted()) {</span>
+<span class="nc" id="L87">                            logger.warn(&quot;Token is blacklisted&quot;);</span>
+<span class="nc" id="L88">                            response.setStatusCode(HttpStatus.UNAUTHORIZED);</span>
+<span class="nc" id="L89">                            return response.writeWith(Mono.just(response.bufferFactory().wrap(&quot;Token is blacklisted&quot;.getBytes())));</span>
+                        }
+
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                        if (authValidationResponse.getUserId() == null) {</span>
+<span class="nc" id="L93">                            logger.warn(&quot;Invalid token: no user ID found&quot;);</span>
+<span class="nc" id="L94">                            response.setStatusCode(HttpStatus.UNAUTHORIZED);</span>
+<span class="nc" id="L95">                            return response.writeWith(Mono.just(response.bufferFactory().wrap(&quot;Invalid token&quot;.getBytes())));</span>
+                        }
+
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                        if (config.getRoles().stream().noneMatch(authValidationResponse.getRoles()::contains)) {</span>
+<span class="nc" id="L99">                            logger.warn(&quot;Insufficient role for user: {}&quot;, authValidationResponse.getUserId());</span>
+<span class="nc" id="L100">                            response.setStatusCode(HttpStatus.UNAUTHORIZED);</span>
+<span class="nc" id="L101">                            return response.writeWith(Mono.just(response.bufferFactory().wrap(&quot;Insufficient role&quot;.getBytes())));</span>
+                        }
+
+<span class="nc" id="L104">                        exchange.getRequest().mutate()</span>
+<span class="nc" id="L105">                                .header(&quot;x-auth-user-id&quot;, String.valueOf(authValidationResponse.getUserId()))</span>
+<span class="nc" id="L106">                                .header(&quot;x-auth-user-name&quot;, authValidationResponse.getUsername())</span>
+<span class="nc" id="L107">                                .header(&quot;x-auth-user-roles&quot;, String.join(&quot;,&quot;, authValidationResponse.getRoles()));</span>
+
+<span class="nc" id="L109">                        return chain.filter(exchange);</span>
+<span class="nc" id="L110">                    }).onErrorResume(e -&gt; {</span>
+<span class="nc" id="L111">                        logger.error(&quot;Token validation error: &quot;, e);</span>
+<span class="nc" id="L112">                        response.setStatusCode(HttpStatus.UNAUTHORIZED);</span>
+<span class="nc" id="L113">                        return response.writeWith(Mono.just(response.bufferFactory().wrap((&quot;Authorization error: &quot; + e.getMessage()).getBytes())));</span>
+                    });
+        };
+    }
+
+    public static class Config {
+        private List&lt;String&gt; roles;
+    
+<span class="nc" id="L121">        public Config() {</span>
+<span class="nc" id="L122">        }</span>
+    
+<span class="nc" id="L124">        public Config(List&lt;String&gt; roles) {</span>
+<span class="nc" id="L125">            this.roles = roles;</span>
+<span class="nc" id="L126">        }</span>
+    
+        public List&lt;String&gt; getRoles() {
+<span class="nc" id="L129">            return roles;</span>
+        }
+    
+        public void setRoles(List&lt;String&gt; roles) {
+<span class="nc" id="L133">            this.roles = roles;</span>
+<span class="nc" id="L134">        }</span>
+    }
+    
+<span class="nc" id="L137">    public static class AuthValidationResponse {</span>
+        private Long userId;
+        private String username;
+        private List&lt;String&gt; roles;
+        private boolean isTokenBlacklisted;
+
+        // Getters and Setters
+        public Long getUserId() {
+<span class="nc" id="L145">            return userId;</span>
+        }
+
+        public void setUserId(Long userId) {
+<span class="nc" id="L149">            this.userId = userId;</span>
+<span class="nc" id="L150">        }</span>
+
+        public String getUsername() {
+<span class="nc" id="L153">            return username;</span>
+        }
+
+        public void setUsername(String username) {
+<span class="nc" id="L157">            this.username = username;</span>
+<span class="nc" id="L158">        }</span>
+
+        public List&lt;String&gt; getRoles() {
+<span class="nc" id="L161">            return roles;</span>
+        }
+
+        public void setRoles(List&lt;String&gt; roles) {
+<span class="nc" id="L165">            this.roles = roles;</span>
+<span class="nc" id="L166">        }</span>
+
+        public boolean isTokenBlacklisted() {
+<span class="nc" id="L169">            return isTokenBlacklisted;</span>
+        }
+
+        public void setTokenBlacklisted(boolean tokenBlacklisted) {
+<span class="nc" id="L173">            isTokenBlacklisted = tokenBlacklisted;</span>
+<span class="nc" id="L174">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

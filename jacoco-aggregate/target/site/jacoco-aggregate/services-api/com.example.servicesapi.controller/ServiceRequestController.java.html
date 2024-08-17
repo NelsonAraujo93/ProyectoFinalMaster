@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ServiceRequestController.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">JaCoCo Report Aggregate</a> &gt; <a href="../index.html" class="el_bundle">services-api</a> &gt; <a href="index.source.html" class="el_package">com.example.servicesapi.controller</a> &gt; <span class="el_source">ServiceRequestController.java</span></div><h1>ServiceRequestController.java</h1><pre class="source lang-java linenums">package com.example.servicesapi.controller;
+
+import com.example.servicesapi.dto.FinalizeRequestDTO;
+import com.example.servicesapi.model.Pyme;
+import com.example.servicesapi.model.ServiceModel;
+import com.example.servicesapi.model.ServiceRequest;
+import com.example.servicesapi.repository.PymeRepository;
+import com.example.servicesapi.repository.ServiceRepository;
+import com.example.servicesapi.service.ServiceRequestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping(&quot;/requests&quot;)
+<span class="nc" id="L22">public class ServiceRequestController {</span>
+
+    @Autowired
+    private ServiceRequestService serviceRequestService;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    @Autowired
+    private PymeRepository pymeRepository;
+
+    // Create a new service request
+    @PostMapping
+    public ResponseEntity&lt;ServiceRequest&gt; createServiceRequest(
+            @RequestBody ServiceRequest serviceRequest,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer clientId) {
+
+<span class="nc" id="L39">        serviceRequest.setClientId(clientId);</span>
+<span class="nc" id="L40">        serviceRequest.setRequestDate(new Date());</span>
+<span class="nc" id="L41">        serviceRequest.setStatus(&quot;Pending&quot;);</span>
+
+<span class="nc" id="L43">        Optional&lt;ServiceModel&gt; serviceOptional = serviceRepository.findById(serviceRequest.getServiceId());</span>
+
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (serviceOptional.isPresent()) {</span>
+<span class="nc" id="L46">            ServiceModel serviceModel = serviceOptional.get();</span>
+<span class="nc" id="L47">            Optional&lt;Pyme&gt; pymeOptional = pymeRepository.findById(serviceModel.getPymeId());</span>
+    
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            if (pymeOptional.isPresent()) {</span>
+<span class="nc" id="L50">                Pyme pyme = pymeOptional.get();</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">                if (pyme.getUser().getId().equals(clientId)) {</span>
+<span class="nc" id="L52">                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
+                }
+    
+<span class="nc" id="L55">                ServiceRequest createdRequest = serviceRequestService.createServiceRequest(serviceRequest);</span>
+<span class="nc" id="L56">                return ResponseEntity.ok(createdRequest);</span>
+            } else {
+<span class="nc" id="L58">                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</span>
+            }
+        } else {
+<span class="nc" id="L61">            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</span>
+        }
+    }
+
+    // Get all service requests for the authenticated client
+    @GetMapping
+    public ResponseEntity&lt;List&lt;ServiceRequest&gt;&gt; getAllServiceRequests(
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer clientId) {
+<span class="nc" id="L69">        List&lt;ServiceRequest&gt; requests = serviceRequestService.getAllServiceRequestsByClientId(clientId);</span>
+<span class="nc" id="L70">        return ResponseEntity.ok(requests);</span>
+    }
+
+    // Get a specific service request by ID for the authenticated client
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;ServiceRequest&gt; getServiceRequestById(
+            @PathVariable String id,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer clientId) {
+<span class="nc" id="L78">        Optional&lt;ServiceRequest&gt; serviceRequest = serviceRequestService.getServiceRequestByIdAndClientId(id, clientId);</span>
+<span class="nc" id="L79">        return serviceRequest.map(ResponseEntity::ok).orElseGet(() -&gt; ResponseEntity.notFound().build());</span>
+    }
+
+    // Delete a specific service request by ID for the authenticated client
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; deleteServiceRequest(
+            @PathVariable String id,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer clientId) {
+<span class="nc" id="L87">        serviceRequestService.deleteServiceRequest(id, clientId);</span>
+<span class="nc" id="L88">        return ResponseEntity.noContent().build();</span>
+    }
+
+    // Update the status of a service request
+    @PatchMapping(&quot;/{id}/status&quot;)
+    public ResponseEntity&lt;ServiceRequest&gt; updateServiceRequestStatus(
+            @PathVariable String id,
+            @RequestBody String status,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Long pymeUserId) {
+
+<span class="nc" id="L98">        Optional&lt;ServiceRequest&gt; serviceRequest = serviceRequestService.getServiceRequestById(id);</span>
+
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (serviceRequest.isPresent()) {</span>
+<span class="nc" id="L101">            ServiceModel serviceModel = serviceRepository.findById(serviceRequest.get().getServiceId()).orElse(null);</span>
+
+<span class="nc bnc" id="L103" title="All 4 branches missed.">            if (serviceModel != null &amp;&amp; serviceModel.getPymeId().equals(pymeUserId)) {</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                if ((&quot;Pending&quot;.equals(serviceRequest.get().getStatus())</span>
+<span class="nc bnc" id="L105" title="All 4 branches missed.">                        &amp;&amp; (&quot;On Process&quot;.equals(status) || &quot;Rejected&quot;.equals(status))) ||</span>
+<span class="nc bnc" id="L106" title="All 4 branches missed.">                        (&quot;On Process&quot;.equals(serviceRequest.get().getStatus()) &amp;&amp; &quot;Completed&quot;.equals(status))) {</span>
+<span class="nc" id="L107">                    serviceRequest.get().setStatus(status);</span>
+<span class="nc" id="L108">                    ServiceRequest updatedRequest = serviceRequestService.updateServiceRequest(serviceRequest.get());</span>
+<span class="nc" id="L109">                    return ResponseEntity.ok(updatedRequest);</span>
+                }
+<span class="nc" id="L111">                return ResponseEntity.badRequest().body(null);</span>
+            } else {
+<span class="nc" id="L113">                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</span>
+            }
+        } else {
+<span class="nc" id="L116">            return ResponseEntity.notFound().build();</span>
+        }
+    }
+
+    @GetMapping(&quot;/grouped&quot;)
+    public ResponseEntity&lt;Map&lt;String, List&lt;ServiceRequest&gt;&gt;&gt; getGroupedServiceRequests(
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer clientId) {
+<span class="nc" id="L123">        Map&lt;String, List&lt;ServiceRequest&gt;&gt; groupedRequests = serviceRequestService</span>
+<span class="nc" id="L124">                .getServiceRequestsGroupedByStatus(clientId);</span>
+<span class="nc" id="L125">        return ResponseEntity.ok(groupedRequests);</span>
+    }
+
+    @GetMapping(&quot;/pyme/requests&quot;)
+    public ResponseEntity&lt;Map&lt;String, List&lt;ServiceRequest&gt;&gt;&gt; getPymeServiceRequests(
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer pymeUserId) {
+
+<span class="nc" id="L132">        Optional&lt;Pyme&gt; pyme = pymeRepository.findByUserId(pymeUserId);</span>
+<span class="nc" id="L133">        Map&lt;String, List&lt;ServiceRequest&gt;&gt; groupedRequests = serviceRequestService</span>
+<span class="nc" id="L134">                .getServiceRequestsGroupedByStatusForPyme(pyme.get().getId());</span>
+<span class="nc" id="L135">        return ResponseEntity.ok(groupedRequests);</span>
+    }
+
+    // Pyme cancels a request
+    @PatchMapping(&quot;/{id}/cancel&quot;)
+    public ResponseEntity&lt;ServiceRequest&gt; cancelRequestByPyme(
+            @PathVariable String id,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer pymeUserId) {
+
+<span class="nc" id="L144">        Optional&lt;Pyme&gt; pyme = pymeRepository.findByUserId(pymeUserId);        </span>
+<span class="nc" id="L145">        ServiceRequest updatedRequest = serviceRequestService.cancelRequestByPyme(id, pyme.get().getId());</span>
+<span class="nc" id="L146">        return ResponseEntity.ok(updatedRequest);</span>
+    }
+
+    // Pyme updates a request to on-process
+    @PatchMapping(&quot;/{id}/on-process&quot;)
+    public ResponseEntity&lt;ServiceRequest&gt; updateRequestToOnProcessByPyme(
+            @PathVariable String id,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer pymeUserId) {
+<span class="nc" id="L154">        Optional&lt;Pyme&gt; pyme = pymeRepository.findByUserId(pymeUserId);</span>
+<span class="nc" id="L155">        ServiceRequest updatedRequest = serviceRequestService.updateRequestToOnProcessByPyme(id, pyme.get().getId());</span>
+<span class="nc" id="L156">        return ResponseEntity.ok(updatedRequest);</span>
+    }
+
+    // Pyme updates a request to complete
+    @PatchMapping(&quot;/{id}/complete&quot;)
+    public ResponseEntity&lt;ServiceRequest&gt; updateRequestToCompleteByPyme(
+            @PathVariable String id,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer pymeUserId) {
+<span class="nc" id="L164">        Optional&lt;Pyme&gt; pyme = pymeRepository.findByUserId(pymeUserId);</span>
+<span class="nc" id="L165">        ServiceRequest updatedRequest = serviceRequestService.updateRequestToCompleteByPyme(id, pyme.get().getId());</span>
+<span class="nc" id="L166">        return ResponseEntity.ok(updatedRequest);</span>
+    }
+
+    // Client finalizes a request with a rating and comment
+    @PatchMapping(&quot;/{id}/finalize&quot;)
+    public ResponseEntity&lt;ServiceRequest&gt; finalizeRequestByClient(
+            @PathVariable String id,
+            @RequestHeader(&quot;x-auth-user-id&quot;) Integer clientId,
+            @RequestBody FinalizeRequestDTO finalizeRequestDTO) {
+
+<span class="nc" id="L176">        ServiceRequest updatedRequest = serviceRequestService.finalizeServiceRequest(</span>
+<span class="nc" id="L177">                id, finalizeRequestDTO.getRating(), finalizeRequestDTO.getComment());</span>
+<span class="nc" id="L178">        return ResponseEntity.ok(updatedRequest);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
