@@ -28,7 +28,4 @@ jobs:
       - name: Run SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar \
-          -Dsonar.projectKey=ProyectoFinalMaster \
-          -Dsonar.organization=nelsonaraujo93 \
-          -Dsonar.host.url=https://sonarcloud.io
+        run: mvn sonar:sonar -Dsonar.projectKey=ProyectoFinalMaster -Dsonar.organization=nelsonaraujo93 -Dsonar.host.url=https://sonarcloud.io
