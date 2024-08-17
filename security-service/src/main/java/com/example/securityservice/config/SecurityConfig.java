@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 public class SecurityConfig {
 
     @Bean
-    SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
@@ -25,18 +25,18 @@ public class SecurityConfig {
                 .anyExchange().authenticated()
             )
             .exceptionHandling(handling -> handling
-                .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> {
-                    swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                }))
-                .accessDeniedHandler((swe, e) -> Mono.fromRunnable(() -> {
-                    swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                }))
+                .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> 
+                    swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)
+                ))
+                .accessDeniedHandler((swe, e) -> Mono.fromRunnable(() -> 
+                    swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN)
+                ))
             )
             .build();
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

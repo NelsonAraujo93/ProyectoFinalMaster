@@ -4,7 +4,16 @@ public class AuthRequest {
     private String username;
     private String password;
 
-    // Getters and Setters
+    // No-argument constructor
+    public AuthRequest() {}
+
+    // Constructor with parameters
+    public AuthRequest(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    // Getters and setters
     public String getUsername() {
         return username;
     }
