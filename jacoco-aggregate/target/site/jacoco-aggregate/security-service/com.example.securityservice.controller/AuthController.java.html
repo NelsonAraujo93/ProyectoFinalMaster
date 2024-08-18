@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AuthController.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">JaCoCo Report Aggregate</a> &gt; <a href="../index.html" class="el_bundle">security-service</a> &gt; <a href="index.source.html" class="el_package">com.example.securityservice.controller</a> &gt; <span class="el_source">AuthController.java</span></div><h1>AuthController.java</h1><pre class="source lang-java linenums">package com.example.securityservice.controller;
+
+import com.example.securityservice.dto.PymeDTO;
+import com.example.securityservice.dto.UserDTO;
+import com.example.securityservice.model.AuthRequest;
+import com.example.securityservice.model.AuthResponse;
+import com.example.securityservice.model.AuthResponseUser;
+import com.example.securityservice.model.User;
+import com.example.securityservice.service.BlacklistedTokenService;
+import com.example.securityservice.service.JwtService;
+import com.example.securityservice.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/auth&quot;)
+public class AuthController {
+
+    private final JwtService jwtService;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final BlacklistedTokenService blacklistedTokenService;
+
+    @Autowired
+<span class="fc" id="L31">    public AuthController(JwtService jwtService, UserService userService, PasswordEncoder passwordEncoder, BlacklistedTokenService blacklistedTokenService) {</span>
+<span class="fc" id="L32">        this.jwtService = jwtService;</span>
+<span class="fc" id="L33">        this.userService = userService;</span>
+<span class="fc" id="L34">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L35">        this.blacklistedTokenService = blacklistedTokenService;</span>
+<span class="fc" id="L36">    }</span>
+
+    @PostMapping(&quot;/authenticate&quot;)
+    public ResponseEntity&lt;AuthResponseUser&gt; authenticate(@RequestBody AuthRequest authRequest) {
+<span class="fc" id="L40">        User user = userService.findByUsername(authRequest.getUsername()).orElse(null);</span>
+<span class="pc bpc" id="L41" title="1 of 4 branches missed.">        if (user != null &amp;&amp; passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {</span>
+<span class="fc" id="L42">            String token = jwtService.generateToken(user.getId(), user.getUsername(), user.getRoleNames());</span>
+
+<span class="fc" id="L44">            UserDTO userDTO = userService.convertToUserDto(user);</span>
+
+<span class="fc" id="L46">            AuthResponseUser authResponse = new AuthResponseUser(token, userDTO, false);</span>
+<span class="fc" id="L47">            return ResponseEntity.ok(authResponse);</span>
+        } else {
+<span class="fc" id="L49">            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponseUser(&quot;Invalid username or password&quot;, true));</span>
+        }
+    }
+
+    @PostMapping(&quot;/register/client&quot;)
+    public ResponseEntity&lt;Object&gt; registerClient(@RequestBody UserDTO userDTO) {
+<span class="fc" id="L55">        return registerUser(userDTO, &quot;CLIENT&quot;);</span>
+    }
+
+    @PostMapping(&quot;/register/pyme&quot;)
+    public ResponseEntity&lt;Object&gt; registerPyme(@RequestBody PymeDTO pymeDTO) {
+<span class="fc" id="L60">        return registerPymeUser(pymeDTO);</span>
+    }
+
+    private ResponseEntity&lt;Object&gt; registerUser(UserDTO userDTO, String role) {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (userService.existsByUsername(userDTO.getUsername())) {</span>
+<span class="fc" id="L65">            return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(&quot;message&quot;, &quot;Username is already taken&quot;));</span>
+        }
+
+<span class="fc" id="L68">        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));</span>
+<span class="fc" id="L69">        userDTO.setEnabled(true);</span>
+<span class="fc" id="L70">        userDTO.setRoles(Collections.singletonList(role)); // Add role to DTO</span>
+
+<span class="fc" id="L72">        userService.saveUser(userDTO);</span>
+
+<span class="fc" id="L74">        return ResponseEntity.status(HttpStatus.CREATED).body(Collections.singletonMap(&quot;message&quot;, &quot;User created successfully with role: &quot; + role));</span>
+    }
+
+    private ResponseEntity&lt;Object&gt; registerPymeUser(PymeDTO pymeDTO) {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (userService.existsByUsername(pymeDTO.getUsername())) {</span>
+<span class="fc" id="L79">            return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(&quot;message&quot;, &quot;Username is already taken&quot;));</span>
+        }
+
+<span class="fc" id="L82">        pymeDTO.setPassword(passwordEncoder.encode(pymeDTO.getPassword()));</span>
+<span class="fc" id="L83">        pymeDTO.setEnabled(true);</span>
+<span class="fc" id="L84">        pymeDTO.setRoles(Collections.singletonList(&quot;PYME&quot;)); // Add role to DTO</span>
+
+<span class="fc" id="L86">        userService.savePyme(pymeDTO);</span>
+
+<span class="fc" id="L88">        return ResponseEntity.status(HttpStatus.CREATED).body(Collections.singletonMap(&quot;message&quot;, &quot;Pyme created successfully with role: PYME&quot;));</span>
+    }
+
+    @GetMapping(&quot;/validateToken&quot;)
+    public ResponseEntity&lt;AuthResponse&gt; validateToken(@RequestHeader(&quot;Authorization&quot;) String authHeader) {
+<span class="fc" id="L93">        String token = authHeader.replace(&quot;Bearer &quot;, &quot;&quot;);</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (blacklistedTokenService.isTokenBlacklisted(token)) {</span>
+<span class="nc" id="L95">            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse(&quot;Token is blacklisted&quot;, true));</span>
+        }
+<span class="fc" id="L97">        boolean isValid = jwtService.validateToken(token);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (isValid) {</span>
+<span class="fc" id="L99">            Long userId = jwtService.getUserIdFromToken(token);</span>
+<span class="fc" id="L100">            String username = jwtService.getUsernameFromToken(token);</span>
+<span class="fc" id="L101">            List&lt;String&gt; roles = jwtService.getRolesFromToken(token);</span>
+<span class="fc" id="L102">            AuthResponse response = new AuthResponse(userId, username, roles, false);</span>
+<span class="fc" id="L103">            return ResponseEntity.ok(response);</span>
+        } else {
+<span class="fc" id="L105">            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse(&quot;Invalid token&quot;, true));</span>
+        }
+    }
+
+    @PostMapping(&quot;/logout&quot;)
+    public ResponseEntity&lt;String&gt; logout(@RequestHeader(&quot;Authorization&quot;) String authHeader) {
+<span class="fc" id="L111">        String token = authHeader.replace(&quot;Bearer &quot;, &quot;&quot;);</span>
+<span class="fc" id="L112">        blacklistedTokenService.blacklistToken(token);</span>
+<span class="fc" id="L113">        return ResponseEntity.ok(&quot;Logged out successfully&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ServiceModel.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">JaCoCo Report Aggregate</a> &gt; <a href="../index.html" class="el_bundle">services-api</a> &gt; <a href="index.source.html" class="el_package">com.example.servicesapi.model</a> &gt; <span class="el_source">ServiceModel.java</span></div><h1>ServiceModel.java</h1><pre class="source lang-java linenums">package com.example.servicesapi.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = &quot;services&quot;)
+public class ServiceModel {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;  // Change from Long to Integer
+
+    @Column(name = &quot;name&quot;, nullable = false)
+    private String name;
+
+    @Column(name = &quot;description&quot;, nullable = false)
+    private String description;
+
+    @Column(name = &quot;price&quot;, nullable = false)
+    private double price;
+
+<span class="fc" id="L21">    @Column(name = &quot;total_rating&quot;, nullable = false)</span>
+    private double totalRating = 0.0;
+
+<span class="fc" id="L24">    @Column(name = &quot;rating_count&quot;, nullable = false)</span>
+    private int ratingCount = 0;
+
+<span class="fc" id="L27">    @Column(name = &quot;average_rating&quot;, nullable = false)</span>
+    private double averageRating = 0.0;
+
+    @Column(name = &quot;pyme_id&quot;, nullable = false)
+    private Integer pymeId;  // Reference to Pyme by ID instead of using the entity
+
+    // Default constructor
+<span class="fc" id="L34">    public ServiceModel() {</span>
+<span class="fc" id="L35">    }</span>
+
+    // Constructor
+<span class="fc" id="L38">    public ServiceModel(String name, String description, double price, Integer pymeId) {    </span>
+<span class="fc" id="L39">        this.name = name;</span>
+<span class="fc" id="L40">        this.description = description;</span>
+<span class="fc" id="L41">        this.price = price;</span>
+<span class="fc" id="L42">        this.pymeId = pymeId;</span>
+<span class="fc" id="L43">    }</span>
+
+    // Getters and setters
+    public Integer getId() {
+<span class="fc" id="L47">        return id;</span>
+    }
+
+    public void setId(Integer id) {
+<span class="fc" id="L51">        this.id = id;</span>
+<span class="fc" id="L52">    }</span>
+
+    public String getName() {
+<span class="fc" id="L55">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="fc" id="L59">        this.name = name;</span>
+<span class="fc" id="L60">    }</span>
+
+    public String getDescription() {
+<span class="fc" id="L63">        return description;</span>
+    }
+
+    public void setDescription(String description) {
+<span class="fc" id="L67">        this.description = description;</span>
+<span class="fc" id="L68">    }</span>
+
+    public double getPrice() {
+<span class="fc" id="L71">        return price;</span>
+    }
+
+    public void setPrice(double price) {
+<span class="fc" id="L75">        this.price = price;</span>
+<span class="fc" id="L76">    }</span>
+
+    public double getTotalRating() {
+<span class="fc" id="L79">        return totalRating;</span>
+    }
+
+    public void setTotalRating(double totalRating) {
+<span class="fc" id="L83">        this.totalRating = totalRating;</span>
+<span class="fc" id="L84">    }</span>
+
+    public int getRatingCount() {
+<span class="fc" id="L87">        return ratingCount;</span>
+    }
+
+    public void setRatingCount(int ratingCount) {
+<span class="fc" id="L91">        this.ratingCount = ratingCount;</span>
+<span class="fc" id="L92">    }</span>
+
+    public Integer getPymeId() {
+<span class="fc" id="L95">        return pymeId;</span>
+    }
+
+    public void setPymeId(Integer pymeId) {
+<span class="fc" id="L99">        this.pymeId = pymeId;</span>
+<span class="fc" id="L100">    }</span>
+
+    public double getAverageRating() {
+<span class="fc" id="L103">        return averageRating;</span>
+    }
+
+    public void setAverageRating(double averageRating) {
+<span class="fc" id="L107">        this.averageRating = averageRating;</span>
+<span class="fc" id="L108">    }</span>
+
+    // Method to add a rating to the service
+    public void addRating(double rating) {
+<span class="fc" id="L112">        totalRating += rating;</span>
+<span class="fc" id="L113">        ratingCount++;</span>
+<span class="fc" id="L114">        averageRating = totalRating / ratingCount;</span>
+<span class="fc" id="L115">    }</span>
+
+    // Method to update a rating for the service
+    public void updateRating(double oldRating, double newRating) {
+<span class="fc" id="L119">        totalRating = totalRating - oldRating + newRating;</span>
+<span class="fc" id="L120">        averageRating = totalRating / ratingCount;</span>
+<span class="fc" id="L121">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

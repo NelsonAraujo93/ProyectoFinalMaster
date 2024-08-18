@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PymeDTO.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">JaCoCo Report Aggregate</a> &gt; <a href="../index.html" class="el_bundle">security-service</a> &gt; <a href="index.source.html" class="el_package">com.example.securityservice.dto</a> &gt; <span class="el_source">PymeDTO.java</span></div><h1>PymeDTO.java</h1><pre class="source lang-java linenums">package com.example.securityservice.dto;
+
+import java.util.List;
+
+<span class="fc" id="L5">public class PymeDTO {</span>
+    private Long id;
+    private String username;
+    private String password;
+    private String dni;
+    private Integer postalCode;
+    private boolean enabled;
+    private List&lt;String&gt; roles;
+
+    // Pyme-specific fields
+    private String pymePostalCode;
+    private String pymePhone;
+    private String pymeName;
+    private String pymeDescription;
+
+    // Getters and setters
+    public Long getId() {
+<span class="fc" id="L22">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L26">        this.id = id;</span>
+<span class="fc" id="L27">    }</span>
+
+    public String getUsername() {
+<span class="fc" id="L30">        return username;</span>
+    }
+
+    public void setUsername(String username) {
+<span class="fc" id="L34">        this.username = username;</span>
+<span class="fc" id="L35">    }</span>
+
+    public String getPassword() {
+<span class="fc" id="L38">        return password;</span>
+    }
+
+    public void setPassword(String password) {
+<span class="fc" id="L42">        this.password = password;</span>
+<span class="fc" id="L43">    }</span>
+
+    public String getDni() {
+<span class="fc" id="L46">        return dni;</span>
+    }
+
+    public void setDni(String dni) {
+<span class="fc" id="L50">        this.dni = dni;</span>
+<span class="fc" id="L51">    }</span>
+
+    public Integer getPostalCode() {
+<span class="fc" id="L54">        return postalCode;</span>
+    }
+
+    public void setPostalCode(Integer postalCode) {
+<span class="fc" id="L58">        this.postalCode = postalCode;</span>
+<span class="fc" id="L59">    }</span>
+
+    public boolean isEnabled() {
+<span class="fc" id="L62">        return enabled;</span>
+    }
+
+    public void setEnabled(boolean enabled) {
+<span class="fc" id="L66">        this.enabled = enabled;</span>
+<span class="fc" id="L67">    }</span>
+
+    public List&lt;String&gt; getRoles() {
+<span class="fc" id="L70">        return roles;</span>
+    }
+
+    public void setRoles(List&lt;String&gt; roles) {
+<span class="fc" id="L74">        this.roles = roles;</span>
+<span class="fc" id="L75">    }</span>
+
+    public String getPymePostalCode() {
+<span class="fc" id="L78">        return pymePostalCode;</span>
+    }
+
+    public void setPymePostalCode(String pymePostalCode) {
+<span class="fc" id="L82">        this.pymePostalCode = pymePostalCode;</span>
+<span class="fc" id="L83">    }</span>
+
+    public String getPymePhone() {
+<span class="fc" id="L86">        return pymePhone;</span>
+    }
+
+    public void setPymePhone(String pymePhone) {
+<span class="fc" id="L90">        this.pymePhone = pymePhone;</span>
+<span class="fc" id="L91">    }</span>
+
+    public String getPymeName() {
+<span class="fc" id="L94">        return pymeName;</span>
+    }
+
+    public void setPymeName(String pymeName) {
+<span class="fc" id="L98">        this.pymeName = pymeName;</span>
+<span class="fc" id="L99">    }</span>
+
+    public String getPymeDescription() {
+<span class="fc" id="L102">        return pymeDescription;</span>
+    }
+
+    public void setPymeDescription(String pymeDescription) {
+<span class="fc" id="L106">        this.pymeDescription = pymeDescription;</span>
+<span class="fc" id="L107">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
