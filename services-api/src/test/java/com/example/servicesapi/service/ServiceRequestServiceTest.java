@@ -17,6 +17,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 public class ServiceRequestServiceTest {
@@ -104,7 +105,9 @@ public class ServiceRequestServiceTest {
       serviceRequestService.createServiceRequest(request);
     });
 
-    assertEquals("Cannot invoke \"java.lang.Integer.equals(Object)\" because the return value of \"com.example.servicesapi.model.Pyme.getId()\" is null", thrown.getMessage());
+    assertEquals(
+        "Cannot invoke \"java.lang.Integer.equals(Object)\" because the return value of \"com.example.servicesapi.model.Pyme.getId()\" is null",
+        thrown.getMessage());
 
     verify(serviceRepository).findById(1);
     verify(pymeRepository).findByUserId(2);
@@ -405,5 +408,95 @@ public class ServiceRequestServiceTest {
     verify(serviceRequestRepository).findById(requestId);
     verify(serviceRepository).findById(2);
     verify(serviceRequestRepository).save(result);
+  }
+
+  @Test
+  void testFinalizeServiceRequest_ValidRequest() {
+    String requestId = "request1";
+    Integer rating = 5;
+    String comment = "Great service";
+
+    ServiceRequest request = new ServiceRequest();
+    request.setId(requestId);
+    request.setStatus("Complete");
+    request.setServiceId(1);
+
+    ServiceModel service = new ServiceModel();
+    service.setId(1);
+    service.setTotalRating(0.0);
+    service.setRatingCount(0);
+
+    when(serviceRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
+    when(serviceRepository.findById(1)).thenReturn(Optional.of(service));
+
+    // Mock save to return the updated request
+    when(serviceRequestRepository.save(any(ServiceRequest.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(serviceRepository.save(any(ServiceModel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    ServiceRequest updatedRequest = serviceRequestService.finalizeServiceRequest(requestId, rating, comment);
+
+    assertNotNull(updatedRequest);
+    assertEquals("Finalized", updatedRequest.getStatus());
+    assertEquals(rating.doubleValue(), updatedRequest.getRating());
+    assertEquals(comment, updatedRequest.getComment());
+    assertNotNull(updatedRequest.getRatingDate());
+
+    verify(serviceRequestRepository).save(updatedRequest);
+    verify(serviceRepository).save(service);
+  }
+
+  @Test
+  void testFinalizeServiceRequest_RequestNotInCompleteStatus() {
+    String requestId = "request2";
+    Integer rating = 5;
+    String comment = "Great service";
+
+    ServiceRequest request = new ServiceRequest();
+    request.setId(requestId);
+    request.setStatus("Pending");
+
+    when(serviceRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
+
+    IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {
+      serviceRequestService.finalizeServiceRequest(requestId, rating, comment);
+    });
+
+    assertEquals("Service request cannot be finalized", thrown.getMessage());
+  }
+
+  @Test
+  void testFinalizeServiceRequest_ServiceNotFound() {
+    String requestId = "request3";
+    Integer rating = 5;
+    String comment = "Great service";
+
+    ServiceRequest request = new ServiceRequest();
+    request.setId(requestId);
+    request.setStatus("Complete");
+    request.setServiceId(1);
+
+    when(serviceRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
+    when(serviceRepository.findById(1)).thenReturn(Optional.empty());
+
+    RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+      serviceRequestService.finalizeServiceRequest(requestId, rating, comment);
+    });
+
+    assertEquals("Service not found", thrown.getMessage());
+  }
+
+  @Test
+  void testFinalizeServiceRequest_NullValues() {
+    assertThrows(RuntimeException.class, () -> {
+      serviceRequestService.finalizeServiceRequest(null, 5, "Great service");
+    });
+
+    assertThrows(RuntimeException.class, () -> {
+      serviceRequestService.finalizeServiceRequest("request4", null, "Great service");
+    });
+
+    assertThrows(RuntimeException.class, () -> {
+      serviceRequestService.finalizeServiceRequest("request4", 5, null);
+    });
   }
 }
