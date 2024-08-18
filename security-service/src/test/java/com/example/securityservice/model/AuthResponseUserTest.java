@@ -48,10 +48,12 @@ public class AuthResponseUserTest {
         userDTO.setUsername("newUser");
         authResponseUser.setData(userDTO);
         authResponseUser.setTokenBlacklisted(true);
+        authResponseUser.setUserDTO(userDTO);
 
         // Verify values
         assertEquals("newToken", authResponseUser.getToken());
         assertEquals(userDTO, authResponseUser.getData());
         assertTrue(authResponseUser.isTokenBlacklisted());
+        assertEquals(userDTO, authResponseUser.getUserDTO());
     }
 }
