@@ -52,10 +52,10 @@ public class SecurityConfigTest {
     serverHttpSecurity.authorizeExchange(exchanges -> exchanges.pathMatchers("/auth/**").permitAll().anyExchange().authenticated());
 
     serverHttpSecurity.exceptionHandling(handling-> handling
-      .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)
-      ))
-      .accessDeniedHandler((swe, e) -> Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN)
-      ))
+    .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)
+    ))
+    .accessDeniedHandler((swe, e) -> Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN)
+    ))
     );
 
     // Assert the result
