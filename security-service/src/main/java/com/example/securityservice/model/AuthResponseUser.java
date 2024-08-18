@@ -42,4 +42,12 @@ public class AuthResponseUser {
   public void setTokenBlacklisted(boolean tokenBlacklisted) {
     isTokenBlacklisted = tokenBlacklisted;
   }
+
+  public UserDTO getUserDTO() {
+    return data;
+  }
+
+  public void setUserDTO(UserDTO userDTO) {
+    this.data = userDTO;
+  }
 }
