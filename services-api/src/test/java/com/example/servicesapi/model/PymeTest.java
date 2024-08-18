@@ -1,4 +1,4 @@
-package com.example.securityservice.model;
+package com.example.servicesapi.model;
 
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,6 @@ public class PymeTest {
         User user = new User();
         user.setUsername("testUser");
         user.setPassword("testPass");
-        user.setDni("12345678");
 
 
         // Set values using setters

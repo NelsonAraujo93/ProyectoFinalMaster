@@ -25,6 +25,14 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration;
 
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public void setExpiration(long expiration) {
+        this.expiration = expiration;
+    }
+
     public String generateToken(Long userId, String username, List<String> roles) {
         try {
             String token = JWT.create()

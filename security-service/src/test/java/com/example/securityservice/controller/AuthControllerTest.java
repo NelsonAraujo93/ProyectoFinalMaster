@@ -64,8 +64,6 @@ public class AuthControllerTest {
         userDTO.setUsername("user");
         userDTO.setRoles(Collections.singletonList("ROLE_USER"));
 
-        AuthResponseUser authResponseUser = new AuthResponseUser("token", userDTO, false);
-
         when(userService.convertToUserDto(user)).thenReturn(userDTO);
 
         AuthRequest authRequest = new AuthRequest("user", "password");
@@ -95,6 +93,7 @@ public class AuthControllerTest {
     }
 
     
+    @SuppressWarnings("null")
     @Test
     void testRegisterClientSuccess() {
         UserDTO userDTO = new UserDTO();
@@ -112,6 +111,7 @@ public class AuthControllerTest {
         verify(userService).saveUser(any(UserDTO.class));
     }
 
+    @SuppressWarnings("null")
     @Test
     void testRegisterClientUsernameAlreadyTaken() {
         UserDTO userDTO = new UserDTO();
@@ -127,6 +127,7 @@ public class AuthControllerTest {
         verify(userService, never()).saveUser(any(UserDTO.class));
     }
 
+    @SuppressWarnings("null")
     @Test
     void testRegisterPymeSuccess() {
         PymeDTO pymeDTO = new PymeDTO();
@@ -144,6 +145,7 @@ public class AuthControllerTest {
         verify(userService).savePyme(any(PymeDTO.class));
     }
 
+    @SuppressWarnings("null")
     @Test
     void testRegisterPymeUsernameAlreadyTaken() {
         PymeDTO pymeDTO = new PymeDTO();

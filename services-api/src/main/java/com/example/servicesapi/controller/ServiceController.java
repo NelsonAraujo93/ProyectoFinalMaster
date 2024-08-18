@@ -92,7 +92,7 @@ public class ServiceController {
         return ResponseEntity.noContent().build();
     }
 
-    private ServiceDTO convertToDTO(ServiceModel serviceModel) {
+    public ServiceDTO convertToDTO(ServiceModel serviceModel) {
         Pyme pyme = pymeRepository.findById(serviceModel.getPymeId()).orElseThrow(() -> new RuntimeException("Pyme not found"));
         ServiceDTO serviceDTO = new ServiceDTO();
         serviceDTO.setId(serviceModel.getId());

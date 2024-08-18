@@ -8,11 +8,10 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @TestConfiguration
 @EnableJpaRepositories(basePackages = "com.example.securityservice.repository")
 public class TestConfig {
-    // Additional test-specific beans or configurations
     @Bean
     public WebTestClient webTestClient() {
         return WebTestClient.bindToServer()
-                .baseUrl("http://localhost:8080") // Adjust as necessary
+                .baseUrl("http://localhost:8080")
                 .build();
     }
 }
