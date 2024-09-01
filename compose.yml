@@ -15,7 +15,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+      - EUREKA_SERVER_URL=http://134.209.195.75:8761/eureka
       - API_SECURITY_URL=http://security-service:8081
       - API_USERS_URL=http://users-api:8082
       - API_SERVICES_URL=http://services-api:8083
@@ -34,10 +34,10 @@ services:
       - MYSQL_DATASOURCE_PASSWORD=9797
       - JWT_SECRET=your_secret
       - JWT_EXPIRATION=3600000
-      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+      - EUREKA_SERVER_URL=http://134.209.195.75:8761/eureka
     healthcheck:
       test: >
-        curl -s http://eureka-server:8761/eureka/apps/SECURITY-SERVICE | grep -q "<status>UP</status>" || exit 1
+        curl -s http://134.209.195.75:8761/eureka/apps/SECURITY-SERVICE | grep -q "<status>UP</status>" || exit 1
       interval: 10s
       timeout: 5s
       retries: 3
@@ -62,10 +62,10 @@ services:
       - SPRING_DATASOURCE_SERVICES_USERNAME=root
       - SPRING_DATASOURCE_SERVICES_PASSWORD=9797
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/services_db
-      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+      - EUREKA_SERVER_URL=http://134.209.195.75:8761/eureka
     depends_on:
       security-service:
-          condition: service_healthy
+        condition: service_healthy
     networks:
       - app-network
 
